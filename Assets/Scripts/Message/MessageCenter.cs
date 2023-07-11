@@ -71,25 +71,84 @@ namespace Message
             Add(messageCmd,action);
         }
 
-        public static void AddM<T, U, V, P>(MessageCmd messageCmd, Action<T, U, V, P> action)
+        public static void Add<T, U, V, P>(MessageCmd messageCmd, Action<T, U, V, P> action)
         {
             Add(messageCmd, action);
         }
 
-        public static void Remove()
-        {
         
+        public static void Remove(MessageCmd messageCmd, Delegate handle)
+        {
+            if (!MessageDict.TryGetValue(messageCmd, out var d)) return;
+            d = Delegate.Remove(d, handle);
+            MessageDict[messageCmd] = d;
+
+        }
+        
+        public static void Remove(MessageCmd messageCmd, Action action)
+        {
+            Remove(messageCmd, action);
         }
 
-
-
-        public static void DisPatch(MessageCmd messageCmd)
+        public static void Remove<T>(MessageCmd messageCmd, Action<T> action)
         {
-            if(MessageDict.TryGetValue(messageCmd,out var d))
-            {
-                var action = d as Action;
-                action?.Invoke();
-            }
+            Remove(messageCmd,action);
+        }
+
+        public static void Remove<T, U>(MessageCmd messageCmd, Action<T, U> action)
+        {
+            Remove(messageCmd,action);
+        }
+
+        public static void Remove<T, U, V>(MessageCmd messageCmd, Action<T, U, V> action)
+        {
+            Remove(messageCmd,action);
+        }
+
+        public static void Remove<T, U, V, P>(MessageCmd messageCmd, Action<T, U, V, P> action)
+        {
+            Remove(messageCmd,action);
+        }
+        
+        
+        public static void Dispatch(MessageCmd messageCmd)
+        {
+            if (!MessageDict.TryGetValue(messageCmd, out var d)) return;
+            var action = d as Action;
+            action?.Invoke();
+        }
+
+        public static void Dispatch<T>(MessageCmd messageCmd, T t)
+        {
+            if (!MessageDict.TryGetValue(messageCmd, out var d)) return;
+            var action = d as Action<T>;
+            action?.Invoke(t);
+        }
+
+        public static void Dispatch<T, U>(MessageCmd messageCmd, T t, U u)
+        {
+            if (!MessageDict.TryGetValue(messageCmd, out var d)) return;
+            var action = d as Action<T, U>;
+            action?.Invoke(t,u);
+        }
+
+        public static void Dispatch<T, U, V>(MessageCmd messageCmd, T t, U u, V v)
+        {
+            if (!MessageDict.TryGetValue(messageCmd, out var d)) return;
+            var action = d as Action<T, U, V>;
+            action?.Invoke(t,u,v);
+        }
+
+        public static void Dispatch<T, U, V, P>(MessageCmd messageCmd, T t, U u, V v, P p)
+        {
+            if (!MessageDict.TryGetValue(messageCmd, out var d)) return;
+            var action = d as Action<T, U, V, P>;
+            action?.Invoke(t,u,v,p);
+        }
+
+        public static void Clear()
+        {
+            MessageDict.Clear();
         }
     
     }
