@@ -1,18 +1,21 @@
-﻿using Mono.CompilerServices.SymbolWriter;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace UI
+namespace UI.Core
 {
     public class AbstractUIManager : MonoBehaviour
     {
+        // 根Canvas
         public Canvas UICanvas { get; private set; }
-        
+
+        // 根UIScaler缩放，为了适配
         public CanvasScaler UIScaler { get; private set; }
-        
+
+        // 根节点的RectTransform
         public RectTransform Root { get; private set; }
 
+        // 事件系统
         public EventSystem EventSystem { get; private set; }
 
         protected void InitInternal(Canvas canvas)
@@ -25,8 +28,6 @@ namespace UI
 
         protected void ReleaseInternal()
         {
-            
         }
-
     }
 }

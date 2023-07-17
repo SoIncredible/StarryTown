@@ -4,12 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-
 namespace Message
 {
-    
-    
-    
     /*
     public struct MessageCmdComparer : IEqualityComparer<MessageCmd>{
         public bool Equals(MessageCmd x, MessageCmd y)
@@ -24,18 +20,13 @@ namespace Message
     }
     */
 
-    
     // 事件中心负责游戏中所有的跨场景、跨页面、跨代码的通信
     // 是基于观察者模式编写的
-    
+
     public static class MessageCenter
     {
-
         private static readonly Dictionary<MessageCmd, Delegate> MessageDict =
             new Dictionary<MessageCmd, Delegate>();
-        // 知识点
-        // 1.方法的重载
-        // 2.委托
 
         private static void Add(MessageCmd messageCmd, Delegate handle)
         {
@@ -45,16 +36,15 @@ namespace Message
             }
             else
             {
-                MessageDict.Add(messageCmd,handle);
+                MessageDict.Add(messageCmd, handle);
             }
-
         }
 
         public static void Add(MessageCmd messageCmd, Action action)
         {
             Add(messageCmd, action);
         }
-        
+
         public static void Add<T>(MessageCmd messageCmd, Action<T> action)
         {
             Add(messageCmd, action);
@@ -62,13 +52,13 @@ namespace Message
 
         public static void Add<T, U>(MessageCmd messageCmd, Action<T, U> action)
         {
-            Add(messageCmd,action);
+            Add(messageCmd, action);
         }
 
 
         public static void Add<T, U, V>(MessageCmd messageCmd, Action<T, U, V> action)
         {
-            Add(messageCmd,action);
+            Add(messageCmd, action);
         }
 
         public static void Add<T, U, V, P>(MessageCmd messageCmd, Action<T, U, V, P> action)
@@ -76,15 +66,14 @@ namespace Message
             Add(messageCmd, action);
         }
 
-        
+
         public static void Remove(MessageCmd messageCmd, Delegate handle)
         {
             if (!MessageDict.TryGetValue(messageCmd, out var d)) return;
             d = Delegate.Remove(d, handle);
             MessageDict[messageCmd] = d;
-
         }
-        
+
         public static void Remove(MessageCmd messageCmd, Action action)
         {
             Remove(messageCmd, action);
@@ -92,25 +81,25 @@ namespace Message
 
         public static void Remove<T>(MessageCmd messageCmd, Action<T> action)
         {
-            Remove(messageCmd,action);
+            Remove(messageCmd, action);
         }
 
         public static void Remove<T, U>(MessageCmd messageCmd, Action<T, U> action)
         {
-            Remove(messageCmd,action);
+            Remove(messageCmd, action);
         }
 
         public static void Remove<T, U, V>(MessageCmd messageCmd, Action<T, U, V> action)
         {
-            Remove(messageCmd,action);
+            Remove(messageCmd, action);
         }
 
         public static void Remove<T, U, V, P>(MessageCmd messageCmd, Action<T, U, V, P> action)
         {
-            Remove(messageCmd,action);
+            Remove(messageCmd, action);
         }
-        
-        
+
+
         public static void Dispatch(MessageCmd messageCmd)
         {
             if (!MessageDict.TryGetValue(messageCmd, out var d)) return;
@@ -129,28 +118,26 @@ namespace Message
         {
             if (!MessageDict.TryGetValue(messageCmd, out var d)) return;
             var action = d as Action<T, U>;
-            action?.Invoke(t,u);
+            action?.Invoke(t, u);
         }
 
         public static void Dispatch<T, U, V>(MessageCmd messageCmd, T t, U u, V v)
         {
             if (!MessageDict.TryGetValue(messageCmd, out var d)) return;
             var action = d as Action<T, U, V>;
-            action?.Invoke(t,u,v);
+            action?.Invoke(t, u, v);
         }
 
         public static void Dispatch<T, U, V, P>(MessageCmd messageCmd, T t, U u, V v, P p)
         {
             if (!MessageDict.TryGetValue(messageCmd, out var d)) return;
             var action = d as Action<T, U, V, P>;
-            action?.Invoke(t,u,v,p);
+            action?.Invoke(t, u, v, p);
         }
 
         public static void Clear()
         {
             MessageDict.Clear();
         }
-    
     }
 }
-

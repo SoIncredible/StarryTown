@@ -7,11 +7,6 @@ namespace Utils
 {
     public class ItemCache<T> where T : Component
     {
-        // 缓存池被创建出来要知道：
-        // 它的父节点
-        // 它要实例化的Prefab
-        // 缓存池的容量
-        // 存放缓存池的栈
         private readonly Stack<T> _cache;
 
         private readonly Func<Transform, GameObject> _loadRes;
@@ -21,7 +16,6 @@ namespace Utils
         private readonly Transform _parentTransform;
 
         private readonly int _capacity;
-
 
         public ItemCache(Func<Transform, GameObject> loadRes, Transform parentTransform, int capacity)
         {
@@ -42,7 +36,7 @@ namespace Utils
 
 
         // 创建Item
-        public T Create()
+        private T Create()
         {
             var gameObject = _loadRes != null
                 ? _loadRes.Invoke(_parentTransform)
