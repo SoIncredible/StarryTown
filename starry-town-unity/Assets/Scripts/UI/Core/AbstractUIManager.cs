@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -28,6 +29,42 @@ namespace UI.Core
 
         protected void ReleaseInternal()
         {
+            CloseAll();
+            ClearTransform();
+            _pages.Clear();
+            _pagesList.Clear();
+
+            foreach (var layer in _uiLayers.Values)
+            {
+                Destroy(layer.gameObject);
+            }
+
+            _uiLayers.Clear();
         }
+
+        public virtual void SetInputActive(bool flag)
+        {
+            EventSystem.enabled = flag;
+        }
+
+
+
+        protected readonly Dictionary<int, UIInfo> _infos = new Dictionary<int, UIInfo>(128);
+
+        protected void AddInfo(UIInfo info)
+        {
+            if(_infos.ContainsKey((int)info.UIType))
+            {
+                
+            }
+        }
+
+
+
+
+
+        private readonly Dictionary<int, BasePage> _pages = new Dictionary<int, BasePage>(128);
+        private readonly List<BasePage> _pageList = new List<BasePage>(128);
+        private readonly Queue<BasePage> _pageQueues = new Queue<BasePage>();
     }
 }
