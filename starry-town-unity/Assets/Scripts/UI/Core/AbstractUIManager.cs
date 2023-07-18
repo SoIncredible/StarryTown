@@ -48,23 +48,34 @@ namespace UI.Core
         }
 
 
-
         protected readonly Dictionary<int, UIInfo> _infos = new Dictionary<int, UIInfo>(128);
 
         protected void AddInfo(UIInfo info)
         {
-            if(_infos.ContainsKey((int)info.UIType))
+            if (_infos.ContainsKey((int)info.UIType))
             {
-                
             }
         }
-
-
 
 
 
         private readonly Dictionary<int, BasePage> _pages = new Dictionary<int, BasePage>(128);
         private readonly List<BasePage> _pageList = new List<BasePage>(128);
         private readonly Queue<BasePage> _pageQueues = new Queue<BasePage>();
+
+        public void CloseAll()
+        {
+            if (_queuePage != null)
+            {
+                _queuePage
+            }
+        }
+
+        protected readonly Dictionary<string, Transform> _transforms = new Dictionary<string, Transform>(50);
+
+        public void ClearTransform()
+        {
+            _transforms.Clear();
+        }
     }
 }
