@@ -1,5 +1,7 @@
 using System;
 using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI.Core
 {
@@ -9,8 +11,9 @@ namespace UI.Core
         public readonly UILayer Layer;
         public readonly Type PageType;
         public readonly Type BaseUI;
+        public Button Button;
 
-        public UIInfo(UIType type, UILayer layer,Type pageType, Type baseUI)
+        public UIInfo(UIType type, UILayer layer, Type pageType, Type baseUI)
         {
             UIType = type;
             Layer = layer;

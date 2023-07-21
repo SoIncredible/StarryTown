@@ -32,14 +32,14 @@ namespace UI.Core
             CloseAll();
             ClearTransform();
             _pages.Clear();
-            _pagesList.Clear();
+            // _pagesList.Clear();
 
-            foreach (var layer in _uiLayers.Values)
-            {
-                Destroy(layer.gameObject);
-            }
-
-            _uiLayers.Clear();
+            // foreach (var layer in _uiLayers.Values)
+            // {
+            //     Destroy(layer.gameObject);
+            // }
+            //
+            // _uiLayers.Clear();
         }
 
         public virtual void SetInputActive(bool flag)
@@ -58,18 +58,18 @@ namespace UI.Core
         }
 
 
-
         private readonly Dictionary<int, BasePage> _pages = new Dictionary<int, BasePage>(128);
         private readonly List<BasePage> _pageList = new List<BasePage>(128);
         private readonly Queue<BasePage> _pageQueues = new Queue<BasePage>();
 
         public void CloseAll()
         {
-            if (_queuePage != null)
-            {
-                _queuePage
-            }
+            // if (_queuePage != null)
+            // {
+            //     // _queuePage
+            // }
         }
+
 
         protected readonly Dictionary<string, Transform> _transforms = new Dictionary<string, Transform>(50);
 
