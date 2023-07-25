@@ -13,6 +13,8 @@ namespace UI.Core
         public readonly Type BaseUI;
         public Button Button;
 
+        public Color color;
+
         public UIInfo(UIType type, UILayer layer, Type pageType, Type baseUI)
         {
             UIType = type;
