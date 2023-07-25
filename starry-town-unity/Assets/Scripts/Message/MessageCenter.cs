@@ -42,28 +42,29 @@ namespace Message
 
         public static void Add(MessageCmd messageCmd, Action action)
         {
-            Add(messageCmd, action);
+            // 必须将action强转成Delegate，否则不会调用上面的Add方法，而是调用自己，造成循环使得程序卡死
+            Add(messageCmd, (Delegate)action);
         }
 
         public static void Add<T>(MessageCmd messageCmd, Action<T> action)
         {
-            Add(messageCmd, action);
+            Add(messageCmd, (Delegate)action);
         }
 
         public static void Add<T, U>(MessageCmd messageCmd, Action<T, U> action)
         {
-            Add(messageCmd, action);
+            Add(messageCmd, (Delegate)action);
         }
 
 
         public static void Add<T, U, V>(MessageCmd messageCmd, Action<T, U, V> action)
         {
-            Add(messageCmd, action);
+            Add(messageCmd, (Delegate)action);
         }
 
         public static void Add<T, U, V, P>(MessageCmd messageCmd, Action<T, U, V, P> action)
         {
-            Add(messageCmd, action);
+            Add(messageCmd, (Delegate)action);
         }
 
 
@@ -76,27 +77,27 @@ namespace Message
 
         public static void Remove(MessageCmd messageCmd, Action action)
         {
-            Remove(messageCmd, action);
+            Remove(messageCmd, (Delegate)action);
         }
 
         public static void Remove<T>(MessageCmd messageCmd, Action<T> action)
         {
-            Remove(messageCmd, action);
+            Remove(messageCmd, (Delegate)action);
         }
 
         public static void Remove<T, U>(MessageCmd messageCmd, Action<T, U> action)
         {
-            Remove(messageCmd, action);
+            Remove(messageCmd, (Delegate)action);
         }
 
         public static void Remove<T, U, V>(MessageCmd messageCmd, Action<T, U, V> action)
         {
-            Remove(messageCmd, action);
+            Remove(messageCmd, (Delegate)action);
         }
 
         public static void Remove<T, U, V, P>(MessageCmd messageCmd, Action<T, U, V, P> action)
         {
-            Remove(messageCmd, action);
+            Remove(messageCmd, (Delegate)action);
         }
 
 
