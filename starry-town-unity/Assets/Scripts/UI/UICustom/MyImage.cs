@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Image : MonoBehaviour
+public class MyImage : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()

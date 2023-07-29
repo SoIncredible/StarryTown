@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using UI.Extension;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace UI.Core
@@ -12,7 +13,7 @@ namespace UI.Core
         public GraphicRaycaster Raycaster;
         public RectTransform Content;
         public CanvasGroup ContentCanvasGroup;
-        public Image BlackImage;
+        [FormerlySerializedAs("BlackImage")] public MyImage blackMyImage;
         public UIRaycast Raycast;
 
 
@@ -27,7 +28,7 @@ namespace UI.Core
                 ContentCanvasGroup = content.GetComponent<CanvasGroup>();
             }
 
-            BlackImage = GetComponent<Image>();
+            blackMyImage = GetComponent<MyImage>();
 
             var raycastTrans = transform.Find("Raycast");
 
