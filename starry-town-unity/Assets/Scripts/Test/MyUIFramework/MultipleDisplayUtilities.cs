@@ -1,8 +1,7 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Test.InterfaceTest
+namespace Test.MyUIFramework
 {
     internal static class MultipleDisplayUtilities
     {

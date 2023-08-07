@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Test.InterfaceTest
+namespace Test.MyUIFramework
 {
     internal static class SetPropertyUtility
     {

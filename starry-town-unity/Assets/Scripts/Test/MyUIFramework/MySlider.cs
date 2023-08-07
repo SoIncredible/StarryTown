@@ -1,12 +1,10 @@
 using System;
-using Mono.CompilerServices.SymbolWriter;
-using UnityEditor.Timeline;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Test.InterfaceTest
+namespace Test.MyUIFramework
 {
     [AddComponentMenu("UI/MySlider", 40)]
     [ExecuteAlways]

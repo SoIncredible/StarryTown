@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Test.InterfaceTest
+namespace Test.MyUIFramework
 {
     public class GameManager : MonoBehaviour
     {
