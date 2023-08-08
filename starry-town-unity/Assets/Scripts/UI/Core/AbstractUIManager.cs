@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace UI.Core
 {
-    public class AbstractUIManager : MonoBehaviour
+    public abstract class AbstractUIManager : MonoBehaviour
     {
         // 根Canvas
         public Canvas UICanvas { get; private set; }
@@ -77,5 +77,8 @@ namespace UI.Core
         {
             _transforms.Clear();
         }
+
+
+        protected abstract T Load<T>(string assetPath, Transform parent) where T : Object;
     }
 }

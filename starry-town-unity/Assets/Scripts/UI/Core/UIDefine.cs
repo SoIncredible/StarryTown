@@ -2,6 +2,10 @@ namespace UI.Core
 {
     public class UIDefine
     {
+        public static class Settings
+        {
+            public const string RootPath = "UI";
+        }
     }
 
     public enum UIType

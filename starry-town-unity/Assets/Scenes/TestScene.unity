@@ -1298,7 +1298,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &878775919
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2409,7 +2409,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2022153874
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2448,6 +2448,7 @@ MonoBehaviour:
   _changeStateBtn: {fileID: 122997633}
   _image: {fileID: 1535943689}
   _changeImageBtn: {fileID: 544464000}
+  _mySliderPro: {fileID: 0}
 --- !u!1 &2101411075
 GameObject:
   m_ObjectHideFlags: 0

@@ -37,7 +37,5 @@ namespace UI.Core
                 Raycast = raycastTrans.GetComponent<UIRaycast>();
             }
         }
-        
     }
-    
 }
