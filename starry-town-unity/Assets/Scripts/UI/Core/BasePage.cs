@@ -28,7 +28,7 @@ namespace UI.Core
         // protected Action _closeCallback;
 
 
-        protected bool IsOpening;
+        public bool IsOpening { get; protected set; }
         protected BaseUI BaseUI { get; private set; }
 
         public void OnCreate(UIType uiType)
@@ -49,7 +49,7 @@ namespace UI.Core
         }
 
 
-        protected virtual void OnOpen(params object[] args)
+        public virtual void OnOpen(params object[] args)
         {
             IsOpening = true;
             try
