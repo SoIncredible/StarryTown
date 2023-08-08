@@ -1,8 +1,6 @@
-using System;
-using UnityEngine;
 using UnityEngine.UI;
 
-namespace Test.MyUIFramework.LearnICanvasElement
+namespace UI.MyUIFramework.LearnICanvasElement
 {
     public class MyGraphic : Graphic
     {

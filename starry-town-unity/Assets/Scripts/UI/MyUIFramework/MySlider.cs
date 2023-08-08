@@ -4,7 +4,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Test.MyUIFramework
+namespace UI.MyUIFramework
 {
     [AddComponentMenu("UI/MySlider", 40)]
     [ExecuteAlways]
