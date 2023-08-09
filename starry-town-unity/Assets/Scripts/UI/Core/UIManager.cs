@@ -18,10 +18,11 @@ namespace UI.Core
         // 所有的UI相关的Prefab都要放在这个路径下
         private const string AssetPath = "Prefab/UI/";
         public static UIManager Instance;
-        private RectTransform RootRect { get; set; }
-        private Canvas UICanvas { get; set; }
 
-        private CanvasScaler UIScaler { get; set; }
+        private RectTransform RootRect { get; set; }
+        // private Canvas UICanvas { get; set; }
+
+        // private CanvasScaler UIScaler { get; set; }
 
         private EventSystem EventSystem { get; set; }
 
@@ -45,15 +46,15 @@ namespace UI.Core
         private void Init()
         {
             Instance.LoadInfo();
-            InitInternal(GameObject.Find("Canvas").GetComponent<Canvas>());
+            InitInternal(GameObject.Find("Canvas"));
         }
 
-        private void InitInternal(Canvas canvas)
+        private void InitInternal(GameObject canvas)
         {
-            UICanvas = canvas;
-            RootRect = canvas.gameObject.GetComponent<RectTransform>();
-            EventSystem = canvas.gameObject.GetComponent<EventSystem>();
-            UIScaler = canvas.GetComponent<CanvasScaler>();
+            // UICanvas = canvas;
+            RootRect = canvas.GetComponent<RectTransform>();
+            // EventSystem = canvas.GetComponent<EventSystem>();
+            // UIScaler = canvas.GetComponent<CanvasScaler>();
         }
 
         private void LoadInfo()

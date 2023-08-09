@@ -1787,6 +1787,8 @@ GameObject:
   m_Component:
   - component: {fileID: 9186004810721770789}
   - component: {fileID: 9186004810721770788}
+  - component: {fileID: 2533920452548602581}
+  - component: {fileID: 1266753739933216665}
   m_Layer: 0
   m_Name: SettingsUI
   m_TagString: Untagged
@@ -1836,6 +1838,38 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &2533920452548602581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9186004810721770791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+--- !u!114 &1266753739933216665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9186004810721770791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44f7facccdb940cfb624c6e58932171e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _settingsTexts: []
+  _settingsBindButonList:
+  - {fileID: 0}
 --- !u!1 &9186004811890823097
 GameObject:
   m_ObjectHideFlags: 0
