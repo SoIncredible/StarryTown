@@ -1,86 +1,97 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Resources;
 using Resource;
 using UI.MainMenu;
 using UI.Settings;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using View;
-using static UI.Core.UIDefine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace UI.Core
 {
-    public class UIManager : AbstractUIManager
+    // 所有的Manager都会挂载到Launcher脚本的game object上面
+    // 不希望使用到AbstractUIManager
+    // 在执行一个关闭和打开操作的时候不是直接打开，而是由事件中心在中间操控
+    public class UIManager : MonoBehaviour
     {
-        public static UIManager Instance { get; private set; }
+        // 所有的UI相关的Prefab都要放在这个路径下
+        private const string AssetPath = "Prefab/UI/";
+        public static UIManager Instance;
+        private RectTransform RootRect { get; set; }
+        private Canvas UICanvas { get; set; }
 
+        private CanvasScaler UIScaler { get; set; }
 
-        public static void Creat(GameObject go)
+        private EventSystem EventSystem { get; set; }
+
+        private readonly Dictionary<int, BasePage> _existingPages = new Dictionary<int, BasePage>(128);
+
+        private readonly Dictionary<int, UIInfo> _infos = new Dictionary<int, UIInfo>(128);
+
+        public static void Creat(GameObject go, Action callBack)
         {
+            if (Instance == null)
+            {
+                Instance = new UIManager();
+            }
+
             Instance = go.AddComponent<UIManager>();
             Instance.Init();
+
+            callBack.Invoke();
         }
 
         private void Init()
         {
-            Instance.InitInternal(GameObject.Find("Canvas").GetComponent<Canvas>());
             Instance.LoadInfo();
-            // var tablet = PlayViewDefine.GetViewTablet();
-            // ResizeMatch(tablet == ViewTablet.Pad);
+            InitInternal(GameObject.Find("Canvas").GetComponent<Canvas>());
         }
 
-        public void ResizeMatch(bool isLow)
+        private void InitInternal(Canvas canvas)
         {
-            UIScaler.matchWidthOrHeight = isLow ? UIDefine.MatchHeight : UIDefine.MatchWidth;
+            UICanvas = canvas;
+            RootRect = canvas.gameObject.GetComponent<RectTransform>();
+            EventSystem = canvas.gameObject.GetComponent<EventSystem>();
+            UIScaler = canvas.GetComponent<CanvasScaler>();
         }
-
-
-        protected readonly Dictionary<int, BasePage> _pages = new Dictionary<int, BasePage>(128);
-
 
         private void LoadInfo()
         {
-            AddInfo(new UIInfo(UIType.MainMenu, UILayer.Background, typeof(MainMenuPage), typeof(MainMenuUI)));
-            AddInfo(new UIInfo(UIType.Settings, UILayer.Dialog, typeof(SettingsPage), typeof(SettingsUI)));
+            AddInfo(new UIInfo(UIType.MainMenu, typeof(MainMenuPage), typeof(MainMenuUI),
+                AssetPath + nameof(MainMenuUI)));
+            AddInfo(new UIInfo(UIType.Settings, typeof(SettingsPage), typeof(SettingsUI),
+                AssetPath + nameof(SettingsUI)));
         }
 
-
-        // 在执行一个关闭和打开操作的时候不是直接打开，而是由事件中心在中间操控
         public bool OpenPage(UIType uiType, params object[] args)
         {
             if (!_infos.TryGetValue((int)uiType, out var info))
             {
-                Debug.LogError("[UIManager] Info is null");
+                Debug.LogError("info中没有该UI相关信息！");
                 return false;
             }
 
             var page = GetPage(info);
 
-            if (page.IsOpening)
+            if (page == null)
             {
-                Debug.LogError("页面已经打开！不能重复打开！");
-
+                Debug.LogError("UI加载失败！");
                 return false;
             }
 
-            AddPageInOrder(info.Layer, page);
+
             page.OnOpen(args);
+            _existingPages.Add((int)uiType, page);
+
             return true;
         }
 
-
-        protected void AddPageInOrder(UILayer uiLayer, BasePage target)
-        {
-            var baseOrder = (int)uiLayer;
-        }
-
-        public void ClosePage(UIType uiType, bool isRemove = false)
+        public void ClosePage(UIType uiType)
         {
             if (_infos.TryGetValue((int)uiType, out var info))
             {
-                Debug.LogError("[UIManager Info is null");
+                Debug.LogError("没有该UI的信息");
                 return;
             }
 
@@ -95,86 +106,62 @@ namespace UI.Core
                 return;
             }
 
-            page.OnClose(delegate
+            page.OnClose(delegate { });
+        }
+
+
+        private GameObject LoadRes(string assetPath)
+        {
+            var prefab = Resources.Load(assetPath);
+
+            if (prefab != null)
             {
-                // RemovePageInOrder(info.Layer, page);
-                // if (_queuePage == page)
-                // {
-                //     _
-                // }
-            });
+                var go = Instantiate(prefab, RootRect);
+                return go as GameObject;
+            }
+
+            Debug.LogError("无法加载资源！资源路径出错！");
+            return null;
         }
 
 
-        protected override T Load<T>(string assetPath, Transform parent)
+        private BasePage GetPage(UIInfo uiInfo)
         {
-            return ResManager.Load<T>(assetPath, parent);
-        }
+            // TODO:为UI添加Layer的设置
 
-
-        protected BasePage GetPage(UIInfo uiInfo)
-        {
-            if (!_pages.TryGetValue((int)uiInfo.UIType, out var page))
+            if (_existingPages.TryGetValue((int)uiInfo.UIType, out var page))
             {
                 return page;
             }
-
-            if (!_uiLayers.TryGetValue((int)uiInfo.Layer, out var parent))
+            else
             {
-                AddLayer(uiInfo.Layer);
-                parent = _uiLayers[(int)uiInfo.Layer];
+                var assetPath = uiInfo.AssetPath;
+                var go = LoadRes(assetPath);
+                if (go != null)
+                {
+                    page = go.AddComponent(uiInfo.PageType) as BasePage;
+
+                    if (page != null)
+                    {
+                        page.OnCreate(uiInfo.UIType);
+                        return page;
+                    }
+                    else
+                    {
+                        Debug.LogError("相关Page脚本读取失败");
+                        return null;
+                    }
+                }
+                else
+                {
+                    Debug.LogError("资源路径错误！无法加载资源");
+                    return null;
+                }
             }
-
-
-            var assetPath = GetAssetPath(uiInfo.BaseUI.Name);
-            var go = Load<GameObject>(assetPath, parent);
-            go.name = uiInfo.UIType + "UI";
-
-            page = go.AddComponent(uiInfo.PageType) as BasePage;
-            page.OnCreate(uiInfo.UIType);
-            return page;
-        }
-
-        public T GetPage<T>(UIType uiType) where T : BasePage
-        {
-            if (!_infos.TryGetValue((int)uiType, out var info))
-            {
-                Debug.LogError("[UIManager] Info is null");
-                return null;
-            }
-
-            return GetPage(info) as T;
         }
 
 
-        protected readonly Dictionary<int, UIInfo> _infos = new Dictionary<int, UIInfo>(128);
-        protected readonly Dictionary<int, Transform> _uiLayers = new Dictionary<int, Transform>(10);
-        protected readonly Dictionary<int, List<BasePage>> _pagesInOrder = new Dictionary<int, List<BasePage>>(10);
-
-        protected void AddLayer(UILayer uiLayer)
-        {
-            var go = new GameObject();
-            go.gameObject.name = uiLayer.ToString();
-
-            go.layer = UIDefine.GameObjectLayerValue;
-
-            var rectTrans = go.AddComponent<RectTransform>();
-
-            UIDefine.NormalizeTransform(rectTrans);
-
-            go.transform.SetParent(Root, false);
-
-            _uiLayers.Add((int)uiLayer, go.transform);
-
-            var canvas = go.AddComponent<Canvas>();
-
-            canvas.overrideSorting = true;
-            canvas.sortingLayerName = UIDefine.SortingLayerName;
-            canvas.sortingOrder = (int)uiLayer;
-        }
-
-
-        protected void AddInfo(UIInfo uiInfo)
+        private void AddInfo(UIInfo uiInfo)
         {
             if (_infos.ContainsKey((int)uiInfo.UIType))
             {
@@ -182,11 +169,6 @@ namespace UI.Core
             }
 
             _infos.Add((int)uiInfo.UIType, uiInfo);
-        }
-
-        protected string GetAssetPath(string assetName)
-        {
-            return Path.Combine(UIDefine.Settings.RootPath, assetName);
         }
     }
 }

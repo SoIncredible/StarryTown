@@ -7,20 +7,38 @@ namespace UI.Core
 {
     public class UIInfo
     {
-        public readonly UIType UIType;
-        public readonly UILayer Layer;
-        public readonly Type PageType;
-        public readonly Type BaseUI;
-        public Button Button;
+        private readonly UIType _uiType;
+        private readonly Type _pageType;
+        private readonly Type _baseUI;
+        private readonly string _assetPath;
 
-        public Color color;
 
-        public UIInfo(UIType type, UILayer layer, Type pageType, Type baseUI)
+        public UIType UIType
         {
-            UIType = type;
-            Layer = layer;
-            PageType = pageType;
-            BaseUI = baseUI;
+            get => _uiType;
+        }
+
+        public Type PageType
+        {
+            get => _pageType;
+        }
+
+        public Type BaseUI
+        {
+            get => _baseUI;
+        }
+
+        public string AssetPath
+        {
+            get => _assetPath;
+        }
+
+        public UIInfo(UIType type, Type pageType, Type baseUI, string assetPath)
+        {
+            _uiType = type;
+            _pageType = pageType;
+            _baseUI = baseUI;
+            _assetPath = assetPath;
         }
     }
 }
