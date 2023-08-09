@@ -11,7 +11,7 @@ namespace UI.Settings
         public List<Text> settingsBindButtonTexts = new List<Text>();
         public List<Button> settingsBindButtonList = new List<Button>();
 
-        public Dictionary<Button, Text> settings
+        // public Dictionary<Button, Text> settings
         public Button closeButton;
     }
 }
