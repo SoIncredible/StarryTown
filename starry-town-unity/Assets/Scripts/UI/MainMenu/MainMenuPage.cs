@@ -7,7 +7,6 @@ namespace UI.MainMenu
     {
         private MainMenuUI _ui;
 
-
         protected override void Init()
         {
             base.Init();
