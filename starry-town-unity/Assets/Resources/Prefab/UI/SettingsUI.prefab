@@ -1867,9 +1867,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44f7facccdb940cfb624c6e58932171e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _settingsTexts: []
+  _settingsBindButtonTexts:
+  - {fileID: 744858960934952202}
+  - {fileID: 744858960390382057}
+  - {fileID: 744858961731485943}
+  - {fileID: 744858959908063099}
   _settingsBindButonList:
-  - {fileID: 0}
+  - {fileID: 744858960134986380}
+  - {fileID: 744858960347651081}
+  - {fileID: 744858960622121616}
+  - {fileID: 744858960776006640}
 --- !u!1 &9186004811890823097
 GameObject:
   m_ObjectHideFlags: 0
