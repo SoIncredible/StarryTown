@@ -6,7 +6,7 @@
         public static class PrefabUI
         {
             public const string MainMenuUI = "Prefab/UI/MainMenuUI";
-            private const string SettingsUI = "Prefab/UI/SettingsUI";
+            public const string SettingsUI = "Prefab/UI/SettingsUI";
         }
 
         public static class PrefabItem

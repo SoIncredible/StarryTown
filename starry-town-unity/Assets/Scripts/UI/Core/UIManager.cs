@@ -15,8 +15,6 @@ namespace UI.Core
     // 在执行一个关闭和打开操作的时候不是直接打开，而是由事件中心在中间操控
     public class UIManager : MonoBehaviour
     {
-        // 所有的UI相关的Prefab都要放在这个路径下
-        private const string AssetPath = "Prefab/UI/";
         public static UIManager Instance;
 
         private RectTransform RootRect { get; set; }
@@ -60,9 +58,9 @@ namespace UI.Core
         private void LoadInfo()
         {
             AddInfo(new UIInfo(UIType.MainMenu, typeof(MainMenuPage), typeof(MainMenuUI),
-                AssetPath + nameof(MainMenuUI)));
+                ResDefine.PrefabUI.MainMenuUI));
             AddInfo(new UIInfo(UIType.Settings, typeof(SettingsPage), typeof(SettingsUI),
-                AssetPath + nameof(SettingsUI)));
+                ResDefine.PrefabUI.SettingsUI));
         }
 
         public bool OpenPage(UIType uiType, params object[] args)

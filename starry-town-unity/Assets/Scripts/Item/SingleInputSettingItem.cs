@@ -1,5 +1,7 @@
+using Message;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Item
@@ -7,18 +9,16 @@ namespace Item
     public class SingleInputSettingItem : BaseItem
     {
         // 此处要做成一个无限循环列表
+        [SerializeField] private Text inputCommandText;
 
-        // 每一个Item需要
-        // public string ActionText;
-        // public string BindButtonText;
-        [SerializeField] private Button BindButton;
+        [SerializeField] private Button bindButton;
+        [SerializeField] private Text bindButtonText;
 
-        [SerializeField] private Text ActionText;
-
-        [SerializeField] private Text BindButtonText;
+        [SerializeField] private Button alternateBinButton;
+        [SerializeField] private Text alternateBindButtonText;
 
         // 备用按键
-        [SerializeField] private Text BinButtonAlternateText;
+
 
         // public void OnCreate(string actionText, string bindButtonText)
         // {
@@ -33,18 +33,30 @@ namespace Item
         {
             if (args.Length == 4)
             {
-                ActionText.text = args[0] as string;
-                BindButtonText.text = args[1] as string;
+                inputCommandText.text = args[0] as string;
+                bindButtonText.text = args[1] as string;
             }
         }
 
         public override void AddEvent()
         {
-            BindButton.onClick.AddListener(OnChangeBindButton);
+            bindButton.onClick.AddListener(OnChangeBindButton);
+            alternateBinButton.onClick.AddListener(OnChangeAlternateBindButton);
+        }
+
+        public override void RemoveEvent()
+        {
+            bindButton.onClick.RemoveAllListeners();
+            alternateBinButton.onClick.RemoveAllListeners();
         }
 
 
         private void OnChangeBindButton()
+        {
+            MessageCenter.Dispatch(MessageCmd.OnGameEnd);
+        }
+
+        private void OnChangeAlternateBindButton()
         {
         }
     }

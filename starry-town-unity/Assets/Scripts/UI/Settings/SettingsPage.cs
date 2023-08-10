@@ -71,8 +71,9 @@ namespace UI.Settings
         {
             base.RemoveEvent();
             _ui.closeButton.onClick.RemoveAllListeners();
-            foreach (var btn in _ui.settingsBindButtonList)
+            foreach (var item in _shownSingleInputSettingItemList)
             {
+                item.RemoveEvent();
             }
         }
 
@@ -87,12 +88,6 @@ namespace UI.Settings
             var prefab = ResManager.Load(ResDefine.PrefabItem.SingleInputSettingItem);
             var item = Instantiate(prefab, parent) as GameObject;
             return item;
-        }
-
-
-        private void OnChangeBindButton()
-        {
-            // 如何获取到是哪个Button被点击？
         }
     }
 }
