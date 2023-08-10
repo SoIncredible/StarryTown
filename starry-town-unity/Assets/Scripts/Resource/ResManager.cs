@@ -3,10 +3,14 @@ using UnityEngine;
 
 namespace Resource
 {
+    // ResManager是一个静态类
+    // TODO: 梳理什么情况下Manager可以用静态 什么时候需要用动态
     public static class ResManager
     {
         public static GameObject Load(string path, Transform parent = null)
         {
+            // TODO: 将加载方法改为范型
+
             var asset = Resources.Load(path);
             if (asset == null)
             {

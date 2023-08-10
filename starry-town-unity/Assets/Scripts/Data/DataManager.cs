@@ -8,6 +8,7 @@ namespace Data
         // 管理数据
         // 加载数据
         // DataManager和ResManager应不应该分开？
+        // 配置文件输入Res还是Data？
 
         public static DataManager Instance;
 

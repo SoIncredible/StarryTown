@@ -76,6 +76,9 @@ namespace UI.Core
         {
         }
 
+        protected virtual void Clear()
+        {
+        }
 
         protected virtual void AddEvent()
         {
