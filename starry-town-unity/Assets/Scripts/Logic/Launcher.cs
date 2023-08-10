@@ -1,4 +1,5 @@
 using System;
+using Data;
 using Message;
 using UI.Core;
 using UnityEngine;
@@ -11,6 +12,11 @@ namespace Logic
         {
             MessageCenter.Add(MessageCmd.OnUIManagerFinishCreate,
                 delegate { UIManager.Instance.OpenPage(UIType.MainMenu); });
+
+
+            DataManager.Create();
+
+
             UIManager.Creat(gameObject, delegate { MessageCenter.Dispatch(MessageCmd.OnUIManagerFinishCreate); });
         }
     }
