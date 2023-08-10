@@ -13,7 +13,13 @@ namespace UI.Settings
     {
         private SettingsUI _ui;
 
-        private List<SettingsConfig.SingleInputSettingItemConfig> singleInputSetingsItemConfigList;
+        private List<SettingsConfig.SingleInputSettingItemConfig> _singleInputSettingsItemConfigList;
+
+        private List<SingleInputSettingItem> _shownSingleInputSettingItemList;
+
+        // 使用缓存池加载
+        private ItemCache<SingleInputSettingItem> _cache;
+
 
         protected override void Init()
         {
@@ -22,18 +28,17 @@ namespace UI.Settings
 
             var temp = ConfigManager.Instance.LoadConfig();
 
-            singleInputSetingsItemConfigList = temp;
+            _singleInputSettingsItemConfigList = temp;
 
+            _cache = new ItemCache<SingleInputSettingItem>(OnCreateSingleInputSettingItem, _ui.InputSettingsRect, 4);
 
-            // 使用缓存池加载
-            ItemCache<SingleInputSettingItem> cache =
-                new ItemCache<SingleInputSettingItem>(OnCreateSingleInputSettingItem, _ui.InputSettingsRect, 4);
+            _shownSingleInputSettingItemList = new List<SingleInputSettingItem>(4);
 
-            foreach (var conf in singleInputSetingsItemConfigList)
+            foreach (var conf in _singleInputSettingsItemConfigList)
             {
-                var item = cache.Pop();
-                item.ActionText.text = conf.ActionText;
-                item.BindButtonText.text = conf.CurBindBtnText;
+                var item = _cache.Pop();
+                _shownSingleInputSettingItemList.Add(item);
+                item.OnCreate(conf.ActionText, conf.CurBindBtnText);
             }
         }
 
@@ -46,15 +51,19 @@ namespace UI.Settings
         {
             base.Clear();
             // 回池
+            while (_shownSingleInputSettingItemList.Count > 0)
+            {
+                _cache.Push(_shownSingleInputSettingItemList[0]);
+            }
         }
 
         protected override void AddEvent()
         {
             base.AddEvent();
             _ui.closeButton.onClick.AddListener(OnCloseBtnClicked);
-            foreach (var btn in _ui.settingsBindButtonList)
+            foreach (var item in _shownSingleInputSettingItemList)
             {
-                // btn.onClick.AddListener();
+                item.AddEvent();
             }
         }
 
@@ -78,6 +87,12 @@ namespace UI.Settings
             var prefab = ResManager.Load(ResDefine.PrefabItem.SingleInputSettingItem);
             var item = Instantiate(prefab, parent) as GameObject;
             return item;
+        }
+
+
+        private void OnChangeBindButton()
+        {
+            // 如何获取到是哪个Button被点击？
         }
     }
 }

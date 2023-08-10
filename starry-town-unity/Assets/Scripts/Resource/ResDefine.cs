@@ -2,6 +2,7 @@
 {
     public static class ResDefine
     {
+        // TODO: 将此脚本改为自动生成
         public static class PrefabUI
         {
             public const string MainMenuUI = "Prefab/UI/MainMenuUI";

@@ -2,15 +2,18 @@
 
 namespace Item
 {
-    public class BaseItem : MonoBehaviour
+    public abstract class BaseItem : MonoBehaviour
     {
         protected RectTransform Parent;
 
+        public abstract void OnCreate(params object[] args);
 
-        // protected abstract void OnCreate(params object[] args);
-        //
-        // protected virtual void OnDestroy()
-        // {
-        // }
+        public virtual void AddEvent()
+        {
+        }
+
+        public virtual void RemoveEvent()
+        {
+        }
     }
 }

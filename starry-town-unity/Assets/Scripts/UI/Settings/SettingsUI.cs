@@ -16,7 +16,7 @@ namespace UI.Settings
         public Button closeButton;
 
 
-        // TODO: 改为无限滑动
+        // TODO: 改为无限滑动列表
         public RectTransform InputSettingsRect;
     }
 }

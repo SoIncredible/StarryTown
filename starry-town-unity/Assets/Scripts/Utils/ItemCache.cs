@@ -7,8 +7,6 @@ namespace Utils
 {
     public class ItemCache<T> where T : Component
     {
-        // 该缓存池创建的是物体
-
         private readonly Stack<T> _cache;
 
         private readonly Func<Transform, GameObject> _loadRes;
