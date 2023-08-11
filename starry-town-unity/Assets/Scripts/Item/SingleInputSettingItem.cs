@@ -1,5 +1,6 @@
 using Config;
 using DefaultNamespace;
+using Listener;
 using Message;
 using Settings;
 using Unity.VisualScripting;
@@ -55,22 +56,9 @@ namespace Item
             // 真实的场景，设置被点击，设置按钮会被清空
             bindButtonText.text = "";
 
-            bool flag = InputSettingsManager.Instance.IsKeyBound("",
-                out SettingsConfig.SingleInputSettingItemConfig? config);
 
-            if (!flag)
-            {
-                // 指定按键没有绑定
-            }
-            else
-            {
-                // 指定按键有绑定
-                // 清除原来绑定的按键
-                // 提示用户原来绑定的按键被删除
-                // 有的操作会有空的按键绑定的情况
-                // 每次更改按键都需要遍历字典
-                InputSettingsManager.Instance.ChangBindKey();
-            }
+            // 有打开就要有关闭
+            KeyBoardListenerManager.Instance.TurnOnKeyBoardInputListening();
 
             // 需要及时保存修改的按键设置
         }
@@ -78,23 +66,8 @@ namespace Item
         private void OnChangeAlternateBindButton()
         {
             alternateBindButtonText.text = "";
-
-            bool flag = InputSettingsManager.Instance.IsKeyBound("",
-                out SettingsConfig.SingleInputSettingItemConfig? config);
-
-            if (!flag)
-            {
-                // 指定按键没有绑定
-            }
-            else
-            {
-                // 指定按键有绑定
-                // 清除原来绑定的按键
-                // 提示用户原来绑定的按键被删除
-                // 有的操作会有空的按键绑定的情况
-                // 每次更改按键都需要遍历字典
-                InputSettingsManager.Instance.ChangBindKey();
-            }
         }
+
+        // 修改成功之后需要refresh所有的setting item
     }
 }

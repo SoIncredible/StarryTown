@@ -91,11 +91,13 @@ namespace Config
             // 用来重制设置
         }
 
-        private void SaveSettingsToJson(SingleInputSettingItemConfig config)
+        public void SaveSettingsToJson(SingleInputSettingItemConfig config)
         {
             string json = JsonUtility.ToJson(config);
 
             PlayerPrefs.SetString(config.ActionText, json);
+
+            PlayerPrefs.Save();
         }
 
         public Dictionary<string, SingleInputSettingItemConfig> GetSettingDic()

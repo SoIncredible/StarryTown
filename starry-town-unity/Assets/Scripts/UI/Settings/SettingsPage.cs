@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Config;
-using Data;
 using Item;
+using Message;
 using Resource;
 using Settings;
 using UI.Core;
@@ -66,6 +66,8 @@ namespace UI.Settings
             {
                 item.AddEvent();
             }
+
+            MessageCenter.Add(MessageCmd.ChangeInputSettingSuccess, RefreshAllItem);
         }
 
         protected override void RemoveEvent()
@@ -89,6 +91,12 @@ namespace UI.Settings
             var prefab = ResManager.Load(ResDefine.PrefabItem.SingleInputSettingItem);
             var item = Instantiate(prefab, parent) as GameObject;
             return item;
+        }
+
+
+        private void RefreshAllItem()
+        {
+            // 当设置按键完成了之后需要Refresh所有的Item
         }
     }
 }

@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using Config;
 using Data;
+using Listener;
 using Message;
 using Settings;
 using UI.Core;
@@ -25,6 +27,16 @@ namespace Logic
             yield return null;
 
             UIManager.Instance.OpenPage(UIType.MainMenu);
+        }
+
+
+        private void Update()
+        {
+            // 监听
+            if (KeyBoardListenerManager.Instance.IsOnListening)
+            {
+                KeyBoardListenerManager.Instance.ListKeyBoardInput();
+            }
         }
     }
 }
