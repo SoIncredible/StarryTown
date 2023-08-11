@@ -6,7 +6,7 @@ namespace Item
     {
         protected RectTransform Parent;
 
-        public abstract void OnCreate(params object[] args);
+        public abstract void OnEnter(params object[] args);
 
         public virtual void AddEvent()
         {

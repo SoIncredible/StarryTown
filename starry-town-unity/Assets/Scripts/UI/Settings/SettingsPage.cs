@@ -16,7 +16,6 @@ namespace UI.Settings
 
         private List<SingleInputSettingItem> _shownSingleInputSettingItemList;
 
-        // 使用缓存池加载
         private ItemCache<SingleInputSettingItem> _cache;
 
         private Dictionary<string, SettingsConfig.SingleInputSettingItemConfig> _settingDic;
@@ -33,19 +32,26 @@ namespace UI.Settings
             _cache = new ItemCache<SingleInputSettingItem>(OnCreateSingleInputSettingItem, _ui.InputSettingsRect, 4);
 
             _shownSingleInputSettingItemList = new List<SingleInputSettingItem>(4);
+        }
+
+        protected override void Prepare(params object[] args)
+        {
+            base.Prepare(args);
+            var temp = InputSettingsManager.Instance.GetSettingDic();
+
+            _settingDic = temp;
+
+            _cache = new ItemCache<SingleInputSettingItem>(OnCreateSingleInputSettingItem, _ui.InputSettingsRect, 4);
+
+            _shownSingleInputSettingItemList = new List<SingleInputSettingItem>(4);
 
             foreach (var i in _settingDic.Keys)
             {
                 var item = _cache.Pop();
                 var conf = _settingDic[i];
                 _shownSingleInputSettingItemList.Add(item);
-                item.OnCreate(conf.ActionText, conf.CurBindBtnText, conf.AlternateBindBtnText);
+                item.OnEnter(conf.ActionText, conf.CurBindBtnText, conf.AlternateBindBtnText);
             }
-        }
-
-        protected override void Prepare(params object[] args)
-        {
-            base.Prepare(args);
         }
 
         protected override void Clear()
@@ -54,7 +60,9 @@ namespace UI.Settings
             // 回池
             while (_shownSingleInputSettingItemList.Count > 0)
             {
-                _cache.Push(_shownSingleInputSettingItemList[0]);
+                var head = _shownSingleInputSettingItemList[0];
+                _cache.Push(head);
+                _shownSingleInputSettingItemList.Remove(head);
             }
         }
 
@@ -67,7 +75,7 @@ namespace UI.Settings
                 item.AddEvent();
             }
 
-            MessageCenter.Add(MessageCmd.ChangeInputSettingSuccess, RefreshAllItem);
+            MessageCenter.Add(MessageCmd.SettingsUIRefresh, RefreshAllItem);
         }
 
         protected override void RemoveEvent()
@@ -78,6 +86,8 @@ namespace UI.Settings
             {
                 item.RemoveEvent();
             }
+
+            MessageCenter.Remove(MessageCmd.SettingsUIRefresh, RefreshAllItem);
         }
 
         private void OnCloseBtnClicked()
@@ -96,7 +106,22 @@ namespace UI.Settings
 
         private void RefreshAllItem()
         {
-            // 当设置按键完成了之后需要Refresh所有的Item
+            var temp = InputSettingsManager.Instance.GetSettingDic();
+            _settingDic = temp;
+            while (_shownSingleInputSettingItemList.Count > 0)
+            {
+                var head = _shownSingleInputSettingItemList[0];
+                _cache.Push(head);
+                _shownSingleInputSettingItemList.Remove(head);
+            }
+
+            foreach (var i in _settingDic.Keys)
+            {
+                var item = _cache.Pop();
+                var conf = _settingDic[i];
+                _shownSingleInputSettingItemList.Add(item);
+                item.OnEnter(conf.ActionText, conf.CurBindBtnText, conf.AlternateBindBtnText);
+            }
         }
     }
 }

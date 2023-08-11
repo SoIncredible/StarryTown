@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.PlasticSCM.Editor.WebApi;
 using UnityEngine;
 using SingleInputSettingItemConfig = Config.SettingsConfig.SingleInputSettingItemConfig;
 
@@ -22,7 +21,7 @@ namespace Config
 
 
         // ConfigManager对SettingsManager应该只暴露这一个Dic，而不会暴露其他的字段
-        public readonly Dictionary<string, SingleInputSettingItemConfig> _configDic =
+        public Dictionary<string, SingleInputSettingItemConfig> _configDic =
             new Dictionary<string, SingleInputSettingItemConfig>(128);
 
 
@@ -103,6 +102,17 @@ namespace Config
         public Dictionary<string, SingleInputSettingItemConfig> GetSettingDic()
         {
             return _configDic;
+        }
+
+        public void UpdateSettingDic(Dictionary<string, SingleInputSettingItemConfig> dic)
+        {
+            // 更新了字典
+            _configDic = dic;
+
+            foreach (var config in _configDic.Values)
+            {
+                SaveSettingsToJson(config);
+            }
         }
     }
 }

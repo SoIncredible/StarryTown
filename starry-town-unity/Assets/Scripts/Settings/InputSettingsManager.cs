@@ -11,7 +11,7 @@ namespace Settings
         // 输入相关设置
         public static InputSettingsManager Instance;
 
-        // const 和 readonly 的区别
+
         private Dictionary<string, SettingsConfig.SingleInputSettingItemConfig> _settingDic;
 
         public static void Creat()
@@ -22,6 +22,8 @@ namespace Settings
             }
 
             Instance.LoadSettingDic();
+
+            Instance.AddListener();
         }
 
 
@@ -36,13 +38,20 @@ namespace Settings
             return _settingDic;
         }
 
+        private void AddListener()
+        {
+            MessageCenter.Add<SettingsConfig.SingleInputSettingItemConfig, string, bool>(
+                MessageCmd.ChangeInputSettingSuccess,
+                RefreshAllSettings);
+        }
+
         public void ResetInputSettings()
         {
             // 重制所有的设置
         }
 
         public bool IsKeyBound(string key,
-            out SettingsConfig.SingleInputSettingItemConfig? config)
+            out SettingsConfig.SingleInputSettingItemConfig config)
         {
             // 检查Key是否被绑定
 
@@ -55,39 +64,63 @@ namespace Settings
                 }
             }
 
-            config = null;
+            config = new SettingsConfig.SingleInputSettingItemConfig();
+
             return false;
         }
 
-        public void ChangBindKey(string key)
+        public void ChangBindKey(SettingsConfig.SingleInputSettingItemConfig co, string key, bool changeCurBtn)
         {
             bool flag = Instance.IsKeyBound(key,
-                out SettingsConfig.SingleInputSettingItemConfig? config);
+                out SettingsConfig.SingleInputSettingItemConfig config);
 
-            if (!flag)
+            if (flag)
             {
-                // 指定按键没有绑定
+                var singleInputSettingItemConfig = _settingDic[co.ActionText];
+                if (config.CurBindBtnText == key)
+                {
+                    singleInputSettingItemConfig.CurBindBtnText = "";
+                }
+                else if (config.AlternateBindBtnText == key)
+                {
+                    singleInputSettingItemConfig.AlternateBindBtnText = "";
+                }
+
+                // 修改已经绑定的按键
+                _settingDic[config.ActionText] = singleInputSettingItemConfig;
+            }
+
+
+            //  不需要遍历字典，只需要将被修改的ItemConfig替换掉
+            // 指定按键没有绑定
+            var singleInputSettingItemConfig1 = _settingDic[co.ActionText];
+            if (changeCurBtn)
+            {
+                // 更改主按键
+
+                singleInputSettingItemConfig1.CurBindBtnText = key;
             }
             else
             {
-                // 指定按键有绑定
-                // 清除原来绑定的按键
-                // 提示用户原来绑定的按键被删除
-                // 有的操作会有空的按键绑定的情况
-                // 每次更改按键都需要遍历字典
+                // 更改备用按键
+
+                singleInputSettingItemConfig1.AlternateBindBtnText = key;
             }
 
-            OnSettingsSuccess();
+            _settingDic[co.ActionText] = singleInputSettingItemConfig1;
+
+            ConfigManager.Instance.UpdateSettingDic(_settingDic);
+            _settingDic = ConfigManager.Instance.GetSettingDic();
         }
 
-
-        // 在此处写一个方法，当修改成功之后可以作为回调保存修改的数据
-        private void OnSettingsSuccess()
+        private void RefreshAllSettings(SettingsConfig.SingleInputSettingItemConfig config, string bindBtnText,
+            bool changeCurBtn)
         {
-            // 如果是冲突的话
-            // 需要替换掉之前的Prefs
-            // 还需要保存新的Prefs
-            MessageCenter.Dispatch(MessageCmd.ChangeInputSettingSuccess);
+            // 判断按键哟没有重复绑定
+            ChangBindKey(config, bindBtnText, changeCurBtn);
+            // 通知SettingsUI Refresh所有的Settings
+
+            MessageCenter.Dispatch(MessageCmd.SettingsUIRefresh);
         }
     }
 }

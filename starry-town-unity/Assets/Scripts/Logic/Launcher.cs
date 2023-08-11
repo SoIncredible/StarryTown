@@ -35,7 +35,7 @@ namespace Logic
             // 监听
             if (KeyBoardListenerManager.Instance.IsOnListening)
             {
-                KeyBoardListenerManager.Instance.ListKeyBoardInput();
+                KeyBoardListenerManager.Instance.ListenKeyBoardInput();
             }
         }
     }
