@@ -1,4 +1,4 @@
-using System;
+using System.Collections;
 using Config;
 using Data;
 using Message;
@@ -10,23 +10,21 @@ namespace Logic
 {
     public class Launcher : MonoBehaviour
     {
-        private void Start()
+        private IEnumerator Start()
         {
-            MessageCenter.Add(MessageCmd.OnUIManagerFinishCreate,
-                delegate { UIManager.Instance.OpenPage(UIType.MainMenu); });
-
-
             ConfigManager.Create();
 
+            yield return null;
 
-            // 每一个Manager创建成功之后才会创建下一个manager
             InputSettingsManager.Creat();
 
+            yield return null;
 
             DataManager.Create();
 
+            yield return null;
 
-            UIManager.Creat(gameObject, delegate { MessageCenter.Dispatch(MessageCmd.OnUIManagerFinishCreate); });
+            UIManager.Instance.OpenPage(UIType.MainMenu);
         }
     }
 }

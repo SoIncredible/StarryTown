@@ -9,7 +9,21 @@ namespace Config
     {
         public static ConfigManager Instance;
 
-        private const string InputSettingsKey = "InputSettings";
+        // TODO: 将该数据替换成Config
+        // 暂时使用PlayerPrefs持久化存储玩家的设置
+        private static readonly List<SingleInputSettingItemConfig> _list =
+            new List<SingleInputSettingItemConfig>()
+            {
+                new SingleInputSettingItemConfig("Fire", "W", "W", ""),
+                new SingleInputSettingItemConfig("SwapWeapon", "A", "A", ""),
+                new SingleInputSettingItemConfig("Lurch", "S", "S", ""),
+                new SingleInputSettingItemConfig("Jump", "D", "D", "")
+            };
+
+
+        // ConfigManager对SettingsManager应该只暴露这一个Dic，而不会暴露其他的字段
+        public readonly Dictionary<string, SingleInputSettingItemConfig> _configDic =
+            new Dictionary<string, SingleInputSettingItemConfig>(128);
 
 
         public static void Create()
@@ -19,23 +33,33 @@ namespace Config
                 Instance = new ConfigManager();
             }
 
-            if (PlayerPrefs.HasKey(InputSettingsKey))
+
+            // 确保所有的Config都在
+            // 由于有些Config可能是后面加上去的，所以在每一次Create的时候都要检查一遍Prefs中有没有包含所有的config
+
+            foreach (var item in _list)
             {
-                string json = PlayerPrefs.GetString(InputSettingsKey);
-                Instance.LoadSettingsFromJson(json);
-            }
-            else
-            {
-                // 没有自定义过
-                Instance.LoadDefaultSettings();
+                if (PlayerPrefs.HasKey(item.ActionText))
+                {
+                    // 自定义过
+                    // 从Prefs中获取
+                    // 不需要保存到Prefs中
+                    string json = PlayerPrefs.GetString(item.ActionText);
+                    Instance.LoadSettingsFromJson(json);
+                }
+                else
+                {
+                    // 没有自定义过
+                    // 从config中获取
+                    var temp = Instance.GetOneConfig(item.ActionText);
+                    // 加载到Dic中去
+                    Instance.LoadSettingsFromConfig(temp);
+                    // 保存到Prefs中
+                    Instance.SaveSettingsToJson(item);
+                }
             }
         }
 
-
-        public List<SingleInputSettingItemConfig> GetConfigList()
-        {
-            return _list;
-        }
 
         public SingleInputSettingItemConfig GetOneConfig(string item)
         {
@@ -53,42 +77,30 @@ namespace Config
 
         private void LoadSettingsFromJson(string json)
         {
-            // data
+            var item = JsonUtility.FromJson<SingleInputSettingItemConfig>(json);
+            _configDic.Add(item.ActionText, item);
+        }
+
+        private void LoadSettingsFromConfig(SingleInputSettingItemConfig item)
+        {
+            _configDic.Add(item.ActionText, item);
         }
 
         private void LoadDefaultSettings()
         {
+            // 用来重制设置
         }
 
-        private string SaveSettingsToJson()
+        private void SaveSettingsToJson(SingleInputSettingItemConfig config)
         {
-            SettingsConfig config = new SettingsConfig();
-
             string json = JsonUtility.ToJson(config);
 
-            PlayerPrefs.SetString(InputSettingsKey, json);
-
-            return json;
+            PlayerPrefs.SetString(config.ActionText, json);
         }
 
-        // 如果在PlayerPrefs中没有存储有用户自定义的配置 则从配置文件中加载
-
-
-        // TODO: 将该数据替换成Config
-        // 暂时使用PlayerPrefs持久化存储玩家的设置
-        private readonly List<SingleInputSettingItemConfig> _list =
-            new List<SingleInputSettingItemConfig>()
-            {
-                new SingleInputSettingItemConfig("Fire", "W", "W", ""),
-                new SingleInputSettingItemConfig("SwapWeapon", "A", "A", ""),
-                new SingleInputSettingItemConfig("Lurch", "S", "S", ""),
-                new SingleInputSettingItemConfig("Jump", "D", "D", "")
-            };
-
-
-        public List<SingleInputSettingItemConfig> LoadConfig()
+        public Dictionary<string, SingleInputSettingItemConfig> GetSettingDic()
         {
-            return _list;
+            return _configDic;
         }
     }
 }

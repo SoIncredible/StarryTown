@@ -3,6 +3,7 @@ using Config;
 using Data;
 using Item;
 using Resource;
+using Settings;
 using UI.Core;
 using UnityEngine;
 using Utils;
@@ -20,23 +21,25 @@ namespace UI.Settings
         // 使用缓存池加载
         private ItemCache<SingleInputSettingItem> _cache;
 
+        private Dictionary<string, SettingsConfig.SingleInputSettingItemConfig> _settingDic;
 
         protected override void Init()
         {
             base.Init();
             _ui = BaseUI as SettingsUI;
 
-            var temp = ConfigManager.Instance.LoadConfig();
+            var temp = InputSettingsManager.Instance.GetSettingDic();
 
-            _singleInputSettingsItemConfigList = temp;
+            _settingDic = temp;
 
             _cache = new ItemCache<SingleInputSettingItem>(OnCreateSingleInputSettingItem, _ui.InputSettingsRect, 4);
 
             _shownSingleInputSettingItemList = new List<SingleInputSettingItem>(4);
 
-            foreach (var conf in _singleInputSettingsItemConfigList)
+            foreach (var i in _settingDic.Keys)
             {
                 var item = _cache.Pop();
+                var conf = _settingDic[i];
                 _shownSingleInputSettingItemList.Add(item);
                 item.OnCreate(conf.ActionText, conf.CurBindBtnText);
             }
