@@ -42,14 +42,6 @@ namespace Config
                 _curBindBtnText = curBindBtnText;
                 _alternateBindBtnText = alternateBindBtnText;
             }
-
-            public SingleInputSettingItemConfig()
-            {
-                _actionText = "";
-                _defaultBindBtnText = "";
-                _curBindBtnText = "";
-                _alternateBindBtnText = "";
-            }
         }
     }
 }

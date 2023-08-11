@@ -14,8 +14,6 @@ namespace UI.Settings
     {
         private SettingsUI _ui;
 
-        private List<SettingsConfig.SingleInputSettingItemConfig> _singleInputSettingsItemConfigList;
-
         private List<SingleInputSettingItem> _shownSingleInputSettingItemList;
 
         // 使用缓存池加载
@@ -41,7 +39,7 @@ namespace UI.Settings
                 var item = _cache.Pop();
                 var conf = _settingDic[i];
                 _shownSingleInputSettingItemList.Add(item);
-                item.OnCreate(conf.ActionText, conf.CurBindBtnText);
+                item.OnCreate(conf.ActionText, conf.CurBindBtnText, conf.AlternateBindBtnText);
             }
         }
 
@@ -85,7 +83,7 @@ namespace UI.Settings
             UIManager.Instance.ClosePage(UIType.Settings);
         }
 
-        //TODO: 编写自定义的资源管理器
+        // TODO: 编写自定义的资源管理器
         private GameObject OnCreateSingleInputSettingItem(Transform parent)
         {
             var prefab = ResManager.Load(ResDefine.PrefabItem.SingleInputSettingItem);

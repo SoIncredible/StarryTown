@@ -72,7 +72,7 @@ namespace Config
             }
 
             Debug.LogError("配置表中没有相关信息！");
-            return new SingleInputSettingItemConfig();
+            return new SingleInputSettingItemConfig("", "", "", "");
         }
 
         private void LoadSettingsFromJson(string json)
