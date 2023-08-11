@@ -86,24 +86,16 @@ namespace Settings
                     singleInputSettingItemConfig.AlternateBindBtnText = "";
                 }
 
-                // 修改已经绑定的按键
                 _settingDic[config.ActionText] = singleInputSettingItemConfig;
             }
 
-
-            //  不需要遍历字典，只需要将被修改的ItemConfig替换掉
-            // 指定按键没有绑定
             var singleInputSettingItemConfig1 = _settingDic[co.ActionText];
             if (changeCurBtn)
             {
-                // 更改主按键
-
                 singleInputSettingItemConfig1.CurBindBtnText = key;
             }
             else
             {
-                // 更改备用按键
-
                 singleInputSettingItemConfig1.AlternateBindBtnText = key;
             }
 
@@ -116,10 +108,7 @@ namespace Settings
         private void RefreshAllSettings(SettingsConfig.SingleInputSettingItemConfig config, string bindBtnText,
             bool changeCurBtn)
         {
-            // 判断按键哟没有重复绑定
             ChangBindKey(config, bindBtnText, changeCurBtn);
-            // 通知SettingsUI Refresh所有的Settings
-
             MessageCenter.Dispatch(MessageCmd.SettingsUIRefresh);
         }
     }
