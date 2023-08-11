@@ -2,6 +2,7 @@ using System;
 using Config;
 using Data;
 using Message;
+using Settings;
 using UI.Core;
 using UnityEngine;
 
@@ -16,6 +17,10 @@ namespace Logic
 
 
             ConfigManager.Create();
+
+
+            // 每一个Manager创建成功之后才会创建下一个manager
+            InputSettingsManager.Creat();
 
 
             DataManager.Create();

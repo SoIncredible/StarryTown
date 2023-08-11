@@ -37,8 +37,18 @@ namespace Config
             return _list;
         }
 
-        public void GetOneConfig()
+        public SingleInputSettingItemConfig GetOneConfig(string item)
         {
+            foreach (var i in _list)
+            {
+                if (item == i.ActionText)
+                {
+                    return i;
+                }
+            }
+
+            Debug.LogError("配置表中没有相关信息！");
+            return new SingleInputSettingItemConfig();
         }
 
         private void LoadSettingsFromJson(string json)
