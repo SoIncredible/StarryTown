@@ -4,52 +4,60 @@ using System.IO;
 using Resource;
 using UI.MainMenu;
 using UI.Settings;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace UI.Core
 {
-    // 所有的Manager都会挂载到Launcher脚本的game object上面
-    // 不希望使用到AbstractUIManager
-    // 在执行一个关闭和打开操作的时候不是直接打开，而是由事件中心在中间操控
     public class UIManager : MonoBehaviour
     {
         public static UIManager Instance;
 
         private RectTransform RootRect { get; set; }
-        // private Canvas UICanvas { get; set; }
+        private Canvas UICanvas { get; set; }
 
         // private CanvasScaler UIScaler { get; set; }
 
         private EventSystem EventSystem { get; set; }
 
+        // 已经存在于场景中的Page
         private readonly Dictionary<int, BasePage> _existingPages = new Dictionary<int, BasePage>(128);
 
-        private readonly Dictionary<int, UIInfo> _infos = new Dictionary<int, UIInfo>(128);
+        // 所有的Page
+        private readonly Dictionary<int, UIInfo> _uiInfos = new Dictionary<int, UIInfo>(128);
 
-        public static void Creat(GameObject go, Action callBack)
+        public static void Creat(GameObject go)
         {
             if (Instance == null)
             {
-                Instance = new UIManager();
+                Instance = go.AddComponent<UIManager>();
             }
 
-            Instance = go.AddComponent<UIManager>();
             Instance.Init();
+        }
 
-            callBack.Invoke();
+        public void Destroy()
+        {
+            foreach (var page in _existingPages)
+            {
+                //TODO: 在销毁UIManager之前先清空游戏中所有存在的Page
+            }
+
+            Instance = null;
         }
 
         private void Init()
         {
-            Instance.LoadInfo();
-            InitInternal(GameObject.Find("Canvas"));
+            // 加载Info
+            LoadInfo();
+            FindUIRootNode(GameObject.Find("Canvas"));
         }
 
-        private void InitInternal(GameObject canvas)
+        private void FindUIRootNode(GameObject canvas)
         {
-            // UICanvas = canvas;
+            UICanvas = canvas.GetComponent<Canvas>();
             RootRect = canvas.GetComponent<RectTransform>();
             // EventSystem = canvas.GetComponent<EventSystem>();
             // UIScaler = canvas.GetComponent<CanvasScaler>();
@@ -63,9 +71,20 @@ namespace UI.Core
                 ResDefine.PrefabUI.SettingsUI));
         }
 
+
+        // 有一些Page可能在整个Session中的生命周期只有一次，那么应该在该页面被关闭了之后执行Destroy
+        public void CreatePage()
+        {
+        }
+
+        public void DestroyPage()
+        {
+        }
+
+
         public bool OpenPage(UIType uiType, params object[] args)
         {
-            if (!_infos.TryGetValue((int)uiType, out var info))
+            if (!_uiInfos.TryGetValue((int)uiType, out var info))
             {
                 Debug.LogError("info中没有该UI相关信息！");
                 return false;
@@ -88,7 +107,7 @@ namespace UI.Core
 
         public void ClosePage(UIType uiType)
         {
-            if (_infos.TryGetValue((int)uiType, out var info))
+            if (_uiInfos.TryGetValue((int)uiType, out var info))
             {
                 Debug.LogError("没有该UI的信息");
                 return;
@@ -162,12 +181,12 @@ namespace UI.Core
 
         private void AddInfo(UIInfo uiInfo)
         {
-            if (_infos.ContainsKey((int)uiInfo.UIType))
+            if (_uiInfos.ContainsKey((int)uiInfo.UIType))
             {
                 return;
             }
 
-            _infos.Add((int)uiInfo.UIType, uiInfo);
+            _uiInfos.Add((int)uiInfo.UIType, uiInfo);
         }
     }
 }

@@ -26,6 +26,8 @@ namespace Logic
 
             yield return null;
 
+            UIManager.Creat(gameObject);
+
             UIManager.Instance.OpenPage(UIType.MainMenu);
         }
 
