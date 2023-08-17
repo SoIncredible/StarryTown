@@ -7,11 +7,12 @@ namespace UI.Core
 {
     public class UIInfo
     {
+        // TODO: 添加UILayer
         private readonly UIType _uiType;
+        private readonly UILayer _uiLayer;
         private readonly Type _pageType;
         private readonly Type _baseUI;
         private readonly string _assetPath;
-
 
         public UIType UIType
         {

@@ -931,6 +931,7 @@ GameObject:
   - component: {fileID: 6280775159910024117}
   - component: {fileID: 6943201702523452404}
   - component: {fileID: 4064261822456771978}
+  - component: {fileID: 4334480086663929626}
   m_Layer: 5
   m_Name: MainMenuUI
   m_TagString: Untagged
@@ -947,15 +948,15 @@ RectTransform:
   m_GameObject: {fileID: 8432155625982836964}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8432155625984964015}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
@@ -968,7 +969,7 @@ Canvas:
   m_GameObject: {fileID: 8432155625982836964}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -1014,6 +1015,14 @@ MonoBehaviour:
   internetGameButton: {fileID: 8432155625245895233}
   loadGameButton: {fileID: 8432155626878959552}
   quitGameButton: {fileID: 8432155626161003004}
+--- !u!222 &4334480086663929626
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8432155625982836964}
+  m_CullTransparentMesh: 1
 --- !u!1 &8432155625984964008
 GameObject:
   m_ObjectHideFlags: 0
