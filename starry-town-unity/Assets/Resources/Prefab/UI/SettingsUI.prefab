@@ -585,7 +585,7 @@ GameObject:
   - component: {fileID: 9186004810721770788}
   - component: {fileID: 2533920452548602581}
   - component: {fileID: 1266753739933216665}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: SettingsUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -676,7 +676,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9186004811890823046}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -18,7 +18,7 @@ namespace UI.Core
         private RectTransform RootRect { get; set; }
         private Canvas UICanvas { get; set; }
 
-        // private CanvasScaler UIScaler { get; set; }
+        private CanvasScaler UIScaler { get; set; }
 
         private EventSystem EventSystem { get; set; }
 
@@ -187,6 +187,12 @@ namespace UI.Core
             }
 
             _uiInfos.Add((int)uiInfo.UIType, uiInfo);
+        }
+
+        // 禁止操作
+
+        public void ForbidInput()
+        {
         }
     }
 }
