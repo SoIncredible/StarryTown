@@ -1,6 +1,7 @@
-namespace Store;
-
-public interface IStoreData
+namespace Store
 {
-    void Reset();
+    public interface IStoreData
+    {
+        void Reset();
+    }
 }

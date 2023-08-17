@@ -1,6 +1,7 @@
-namespace Item;
-
-public class InfiniteLoopList
+namespace Item
 {
-    // 实现无限滑动列表
+    public class InfiniteLoopList
+    {
+        // 实现无限滑动列表
+    }
 }

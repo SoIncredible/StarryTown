@@ -1,27 +1,36 @@
-namespace Store;
-
-public class StoreManager
+namespace Store
 {
-    public static StoreManager Instance;
-
-    public static void Create()
+    public class StoreManager
     {
-        Instance = new StoreManager();
-        Instance.Init();
-    }
+        public static StoreManager Instance;
 
-    private void Init()
-    {
-    }
+        public static void Create()
+        {
+            Instance = new StoreManager();
+            Instance.Init();
+        }
 
-    private void Release()
-    {
-        StoreRoot.Inst = null;
-    }
+        private void Init()
+        {
+        }
+
+        private void Release()
+        {
+            StoreRoot.Inst = null;
+        }
 
 
-    public void Save()
-    {
-        // 
+        public void Load()
+        {
+        }
+
+        // public T Load<T>()
+        // {
+        // }
+
+        public void Save()
+        {
+            // 
+        }
     }
-}
+};

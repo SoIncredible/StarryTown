@@ -1,26 +1,28 @@
 using Store.Data;
 
-namespace Store;
-
-public class StoreRoot
+namespace Store
 {
-    public static StoreRoot Inst;
-
-    public SettingsData Settings;
-
-
-    public void Init()
+    // TODO:将StoreRoot配置为自动生成
+    public class StoreRoot
     {
-        if (Settings == null)
+        public static StoreRoot Inst;
+
+        public SettingsData Settings;
+
+
+        public void Init()
         {
-            Settings = new SettingsData();
+            if (Settings == null)
+            {
+                Settings = new SettingsData();
+                Settings.Reset();
+            }
+        }
+
+
+        public void Reset()
+        {
             Settings.Reset();
         }
-    }
-
-
-    public void Reset()
-    {
-        Settings.Reset();
     }
 }

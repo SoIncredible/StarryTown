@@ -1,22 +1,24 @@
 using System.Collections.Generic;
 using Config;
 
-namespace Store.Data;
-
-public class SettingsData : IStoreData
+namespace Store.Data
 {
-    public static SettingsData Data => StoreRoot.Inst.Settings;
-
-    public List<SettingsConfig.SingleInputSettingItemConfig> InputSettingsList;
-
-    public void Reset()
+    public class SettingsData : IStoreData
     {
-        InputSettingsList = ReadConfig();
-    }
+        public static SettingsData Data => StoreRoot.Inst.Settings;
 
-    // 读配置表
-    List<SettingsConfig.SingleInputSettingItemConfig> ReadConfig()
-    {
-        return new List<SettingsConfig.SingleInputSettingItemConfig>();
+        public List<SettingsConfig.SingleInputSettingItemConfig> InputSettingsList;
+
+        public void Reset()
+        {
+            InputSettingsList =
+                new List<SettingsConfig.SingleInputSettingItemConfig>()
+                {
+                    new SettingsConfig.SingleInputSettingItemConfig("Fire", "W", "W", ""),
+                    new SettingsConfig.SingleInputSettingItemConfig("SwapWeapon", "A", "A", ""),
+                    new SettingsConfig.SingleInputSettingItemConfig("Lurch", "S", "S", ""),
+                    new SettingsConfig.SingleInputSettingItemConfig("Jump", "D", "D", "")
+                };
+        }
     }
-}
+};
