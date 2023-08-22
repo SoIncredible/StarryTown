@@ -11,6 +11,7 @@
 
         // 更改输入设置后的请求
 
+        // Message用于Data发生改变时通知相关页面刷新的场景
         ChangeInputSettingSuccess,
 
         SettingsUIRefresh,

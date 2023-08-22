@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<inputsettings>
+    <Item ID="0" Command="MoveUP" DefaultKey="W" />
+    <Item ID="1" Command="MoveDown" DefaultKey="S" />
+    <Item ID="2" Command="MoveLeft" DefaultKey="A" />
+    <Item ID="3" Command="MoveRight" DefaultKey="D" />
+    <Item ID="4" Command="Interact" DefaultKey="F" />
+    <Item ID="5" Command="Map" DefaultKey="M" />
+    <Item ID="6" Command="Aim" DefaultKey="MouseRight" />
+    <Item ID="7" Command="Shoot" DefaultKey="MouseLeft" />
+</inputsettings>
