@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.learnings.unity.log": {
+      "version": "file:../Assets/Packages/com.learnings.unity.log@1.1.0",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
+    },
     "com.unity.2d.animation": {
       "version": "7.0.8",
       "depth": 1,
