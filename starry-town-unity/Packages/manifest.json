@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "com.learnings.unity.log": "file:/Users/mac/Desktop/royal-solitaire/royal-solitaire-unity/Library/PackageCache/com.learnings.unity.log@1.1.0",
     "com.unity.collab-proxy": "1.17.6",
     "com.unity.feature.2d": "1.0.0",
     "com.unity.ide.rider": "3.0.16",
@@ -41,6 +40,8 @@
     "com.unity.modules.video": "1.0.0",
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
-    "com.unity.modules.xr": "1.0.0"
-  }
+    "com.unity.modules.xr": "1.0.0",
+    "com.learnings.unity.log": "1.1.0"
+  },
+  "registry": "https://internal-sdk.lexinshengwen.com/verdaccio/"
 }
