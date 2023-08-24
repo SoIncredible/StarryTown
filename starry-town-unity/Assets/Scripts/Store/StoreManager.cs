@@ -1,3 +1,5 @@
+using System;
+
 namespace Store
 {
     public class StoreManager
@@ -18,6 +20,17 @@ namespace Store
         {
             StoreRoot.Inst = null;
         }
+
+        // 私有构造函数
+        private StoreManager()
+        {
+        }
+
+        private const string FileName = "StoreData";
+        private static readonly Version StoreVersion = new Version(1, 0, 0);
+        private const int Version = 1;
+
+        private StoreFile _storeFile;
 
 
         public void Load()
