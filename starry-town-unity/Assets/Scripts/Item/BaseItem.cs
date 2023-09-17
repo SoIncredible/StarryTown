@@ -1,5 +1,4 @@
-﻿using Unity.VisualScripting.Dependencies.NCalc;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Item
 {
@@ -15,11 +14,6 @@ namespace Item
 
         public virtual void RemoveEvent()
         {
-        }
-
-        public void Function()
-        {
-            // 此方法为测试如何撤回Git修改的测试
         }
     }
 }
