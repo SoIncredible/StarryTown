@@ -23,7 +23,6 @@ namespace Movement
             var curLength = 0f;
             while (curLength < length)
             {
-                var pos = Vector3.Lerp(_startPos.position, _endPos.position, curLength / length);
                 curLength += _speed * Time.deltaTime;
                 if (curLength > length)
                 {
@@ -31,6 +30,7 @@ namespace Movement
                     yield break;
                 }
 
+                var pos = Vector3.Lerp(_startPos.position, _endPos.position, curLength / length);
                 transform.position = pos;
                 yield return null;
             }
