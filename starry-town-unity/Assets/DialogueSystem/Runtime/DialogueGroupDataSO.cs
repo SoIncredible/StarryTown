@@ -24,8 +24,10 @@ namespace RPGCore.Dialogue.Runtime
                     currentOpenedItemInEditor = dialogueItems[0];
                 }
             }
+
             return currentOpenedItemInEditor;
         }
+
         public void SetOpenedEditorItem(string itemName)
         {
             currentOpenedItemInEditor = dialogueItems.Find(item => item.name == itemName) ?? currentOpenedItemInEditor;
@@ -40,8 +42,10 @@ namespace RPGCore.Dialogue.Runtime
                     currentActiveItem = dialogueItems.Find(item => item.name.Split("-").Last() == "default");
                 }
             }
+
             return currentActiveItem;
         }
+
         public bool SetActiveItem(string itemName)
         {
             currentActiveItem = dialogueItems.Find(item => item.name == itemName);
@@ -49,6 +53,7 @@ namespace RPGCore.Dialogue.Runtime
             {
                 currentActiveItem = dialogueItems.Find(item => item.name.Split("-").Last() == itemName);
             }
+
             return currentActiveItem != null;
         }
     }

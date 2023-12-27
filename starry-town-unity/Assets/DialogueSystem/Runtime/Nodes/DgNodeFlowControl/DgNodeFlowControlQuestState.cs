@@ -9,13 +9,11 @@ namespace RPGCore.Dialogue.Runtime
     {
         //Test
         public bool IsQuestFinished;
+
         public DgNodeFlowControlQuestState()
         {
             Name = "Quest State";
-            SetCondition(() => 
-            {
-                return IsQuestFinished;
-			});
+            SetCondition(() => { return IsQuestFinished; });
         }
     }
 }

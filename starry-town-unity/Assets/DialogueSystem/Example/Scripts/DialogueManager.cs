@@ -1,63 +1,67 @@
 using RPGCore.Dialogue.Runtime;
 using RPGCore.UI;
+
 public class DialogueManager : DialogueManagerTemplate<DialogueManager>
 {
-	public DialoguePanel dialoguePanel;
-	public override void StartDialogue(DialogueGroupDataSO groupData)
-	{
-		base.StartDialogue(groupData);
-		dialoguePanel = UIManager.Instance.ShowPanel<DialoguePanel>();
-		dialoguePanel.OnMoveNext = () => MoveNext(null);
-		dialoguePanel.OnChoiceSelected = param => { MoveNext(param); };
-		MoveNext(null);
-	}
+    public DialoguePanel dialoguePanel;
 
-	public override void StopDialogue()
-	{
-		base.StopDialogue();
-		UIManager.Instance.HidePanel<DialoguePanel>();
-		dialoguePanel = null;
-	}
+    public override void StartDialogue(DialogueGroupDataSO groupData)
+    {
+        base.StartDialogue(groupData);
+        dialoguePanel = UIManager.Instance.ShowPanel<DialoguePanel>();
+        dialoguePanel.OnMoveNext = () => MoveNext(null);
+        dialoguePanel.OnChoiceSelected = param => { MoveNext(param); };
+        MoveNext(null);
+    }
 
-	public override void ProcessDialogueNode(IDgNode currentNode)
-	{
-		DgNodeType nodeType = currentNode.Type;
-		//Èç¹ûÉÏÒ»¸ö´¦ÀíµÄ½ÚµãÊÇÑ¡Ôñ½ÚµãÔò½«Ñ¡ÔñÃæ°åÒş²Ø
-		if (previousDialogueNode.Type == DgNodeType.Choice) 
-		{
-			dialoguePanel.HideChoices();
-		}
-		switch (nodeType)
-		{
-			case DgNodeType.Start:
-				break;
-			case DgNodeType.End:
-				StopDialogue();
-				break;
-			case DgNodeType.Sentence:
-				DgNodeSentence sentence = currentNode.Get<DgNodeSentence>();
-				dialoguePanel.sentenceContent.text = sentence.Content;
-				///ATTENTION:½ö²âÊÔÓÃ
-				dialoguePanel.speakerContent.text = sentence.speaker.ToString();
-				break;
-			case DgNodeType.Choice:
-				DgNodeChoice choices = currentNode.Get<DgNodeChoice>();
-				foreach (var choice in choices.Choices)
-				{
-					dialoguePanel.AddChoiceItem(choice);
-				}
-				dialoguePanel.ShowChoices();
-				break;
-			case DgNodeType.Random://Ö´ĞĞµ½Random½ÚµãºóÁ¢¼´ÔÙ´ÎÖ´ĞĞ
-				MoveNext(null);
-				break;
-			case DgNodeType.Action://Ö´ĞĞµ½Action½ÚµãºóÁ¢¼´ÔÙ´ÎÖ´ĞĞ
-				currentNode.Get<DgNodeActionBase>().OnAction();
-				MoveNext(null);
-				break;
-			case DgNodeType.Flow://Ö´ĞĞµ½Flow½ÚµãºóÁ¢¼´ÔÙ´ÎÖ´ĞĞ
-				MoveNext(null);
-				break;
-		}
-	}
+    public override void StopDialogue()
+    {
+        base.StopDialogue();
+        UIManager.Instance.HidePanel<DialoguePanel>();
+        dialoguePanel = null;
+    }
+
+    public override void ProcessDialogueNode(IDgNode currentNode)
+    {
+        DgNodeType nodeType = currentNode.Type;
+        //å¦‚æœä¸Šä¸€ä¸ªå¤„ç†çš„èŠ‚ç‚¹æ˜¯é€‰æ‹©èŠ‚ç‚¹åˆ™å°†é€‰æ‹©é¢æ¿éšè—
+        if (previousDialogueNode.Type == DgNodeType.Choice)
+        {
+            dialoguePanel.HideChoices();
+        }
+
+        switch (nodeType)
+        {
+            case DgNodeType.Start:
+                break;
+            case DgNodeType.End:
+                StopDialogue();
+                break;
+            case DgNodeType.Sentence:
+                DgNodeSentence sentence = currentNode.Get<DgNodeSentence>();
+                dialoguePanel.sentenceContent.text = sentence.Content;
+                ///ATTENTION:ä»…æµ‹è¯•ç”¨
+                dialoguePanel.speakerContent.text = sentence.speaker.ToString();
+                break;
+            case DgNodeType.Choice:
+                DgNodeChoice choices = currentNode.Get<DgNodeChoice>();
+                foreach (var choice in choices.Choices)
+                {
+                    dialoguePanel.AddChoiceItem(choice);
+                }
+
+                dialoguePanel.ShowChoices();
+                break;
+            case DgNodeType.Random: //æ‰§è¡Œåˆ°RandomèŠ‚ç‚¹åç«‹å³å†æ¬¡æ‰§è¡Œ
+                MoveNext(null);
+                break;
+            case DgNodeType.Action: //æ‰§è¡Œåˆ°ActionèŠ‚ç‚¹åç«‹å³å†æ¬¡æ‰§è¡Œ
+                currentNode.Get<DgNodeActionBase>().OnAction();
+                MoveNext(null);
+                break;
+            case DgNodeType.Flow: //æ‰§è¡Œåˆ°FlowèŠ‚ç‚¹åç«‹å³å†æ¬¡æ‰§è¡Œ
+                MoveNext(null);
+                break;
+        }
+    }
 }

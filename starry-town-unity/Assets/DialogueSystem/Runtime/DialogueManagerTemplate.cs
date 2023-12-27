@@ -7,92 +7,97 @@ using UnityEngine;
 namespace RPGCore.Dialogue.Runtime
 {
     /// <summary>
-    /// ¶Ô»°¹ÜÀíÆ÷Ä£°å£¬Ìá¹©ÁË»ù±¾µÄ·½·¨£¬Êµ¼ÊÊ¹ÓÃĞèÒª¼Ì³Ğ´ËÀàÊµÏÖ¸ü¶àÏ¸½Ú
+    /// å¯¹è¯ç®¡ç†å™¨æ¨¡æ¿ï¼Œæä¾›äº†åŸºæœ¬çš„æ–¹æ³•ï¼Œå®é™…ä½¿ç”¨éœ€è¦ç»§æ‰¿æ­¤ç±»å®ç°æ›´å¤šç»†èŠ‚
     /// </summary>
     public abstract class DialogueManagerTemplate<T> : Singleton<T> where T : new()
     {
         private DialogueGroupDataSO currentActiveDialogueGroup;
+
         /// <summary>
-        /// µ±Ç°ÕıÔÚÊ¹ÓÃµÄDialogueGroupÊı¾İ
+        /// å½“å‰æ­£åœ¨ä½¿ç”¨çš„DialogueGroupæ•°æ®
         /// </summary>
         public DialogueGroupDataSO CurrentActiveDialogueGroup
-		{
+        {
             get { return currentActiveDialogueGroup; }
             set { currentActiveDialogueGroup = value; }
         }
 
         private bool isAnyDialogueBeExecuting;
+
         /// <summary>
-        /// µ±Ç°ÊÇ·ñÕıÔÚÖ´ĞĞÒ»¸ö¶Ô»°
+        /// å½“å‰æ˜¯å¦æ­£åœ¨æ‰§è¡Œä¸€ä¸ªå¯¹è¯
         /// </summary>
         public bool IsAnyDialogueBeExecuting
-		{
+        {
             get { return isAnyDialogueBeExecuting; }
         }
 
-        //µ±Ç°¶Ô»°½Úµã
+        //å½“å‰å¯¹è¯èŠ‚ç‚¹
         protected IDgNode currentDialogueNode;
-		//ÉÏÒ»¸ö¶Ô»°½Úµã
-		protected IDgNode previousDialogueNode;
-		protected string itemNameToChange;
+
+        //ä¸Šä¸€ä¸ªå¯¹è¯èŠ‚ç‚¹
+        protected IDgNode previousDialogueNode;
+        protected string itemNameToChange;
 
         /// <summary>
-        /// ¿ªÊ¼¶Ô»°
+        /// å¼€å§‹å¯¹è¯
         /// </summary>
-        public virtual void StartDialogue(DialogueGroupDataSO groupData) 
+        public virtual void StartDialogue(DialogueGroupDataSO groupData)
         {
             isAnyDialogueBeExecuting = true;
             currentActiveDialogueGroup = groupData;
             DialogueItemDataSO item = currentActiveDialogueGroup.GetActiveItem();
             foreach (var node in item.dgNodes)
             {
-                node.NextNodes.AddRange(item.dgNodes.Where(n=>node.nextNodesGuid.Contains(n.Guid)));
+                node.NextNodes.AddRange(item.dgNodes.Where(n => node.nextNodesGuid.Contains(n.Guid)));
             }
+
             currentDialogueNode = currentActiveDialogueGroup.GetActiveItem().StartNode();
         }
 
         /// <summary>
-        /// ½áÊø¶Ô»°
+        /// ç»“æŸå¯¹è¯
         /// </summary>
-        public virtual void StopDialogue() 
+        public virtual void StopDialogue()
         {
             isAnyDialogueBeExecuting = false;
-            //Ö´ĞĞitemÇĞ»»
-            if (!string.IsNullOrWhiteSpace(itemNameToChange)) 
+            //æ‰§è¡Œitemåˆ‡æ¢
+            if (!string.IsNullOrWhiteSpace(itemNameToChange))
             {
-                if (!CurrentActiveDialogueGroup.SetActiveItem(itemNameToChange)) 
+                if (!CurrentActiveDialogueGroup.SetActiveItem(itemNameToChange))
                 {
                     Debug.LogError($"{currentActiveDialogueGroup.name} Change Item to {itemNameToChange} failed.");
                 }
             }
+
             currentActiveDialogueGroup = null;
             currentDialogueNode = null;
             previousDialogueNode = null;
         }
 
-		/// <summary>
-		/// µ÷ÓÃ´Ë·½·¨´¦ÀíÌø×ªµ½µ±Ç°¶Ô»°µÄÏÂÒ»¸ö½Úµã
-		/// </summary>
-		/// <param name="param"></param>
-		public void MoveNext(object param)
+        /// <summary>
+        /// è°ƒç”¨æ­¤æ–¹æ³•å¤„ç†è·³è½¬åˆ°å½“å‰å¯¹è¯çš„ä¸‹ä¸€ä¸ªèŠ‚ç‚¹
+        /// </summary>
+        /// <param name="param"></param>
+        public void MoveNext(object param)
         {
-            //¼ÇÂ¼Ç°Ò»´ÎÖ´ĞĞµÄ½Úµã
+            //è®°å½•å‰ä¸€æ¬¡æ‰§è¡Œçš„èŠ‚ç‚¹
             previousDialogueNode = currentDialogueNode;
-            //ÒÆ¶¯µ½ÏÂÒ»¸ö½Úµã
+            //ç§»åŠ¨åˆ°ä¸‹ä¸€ä¸ªèŠ‚ç‚¹
             currentDialogueNode = currentDialogueNode.GetNext(param);
-            //´¦Àíµ±Ç°½Úµã
+            //å¤„ç†å½“å‰èŠ‚ç‚¹
             ProcessDialogueNode(currentDialogueNode);
         }
 
         public abstract void ProcessDialogueNode(IDgNode currentNode);
 
         /// <summary>
-        /// ÇĞ»»µ±Ç°Ö´ĞĞµÄGroupµÄ¼¤»îµÄItem
-        /// ½öµ±µ±Ç°¶Ô»°½áÊøÊ±²Å»áÖ´ĞĞÇĞ»»
+        /// åˆ‡æ¢å½“å‰æ‰§è¡Œçš„Groupçš„æ¿€æ´»çš„Item
+        /// ä»…å½“å½“å‰å¯¹è¯ç»“æŸæ—¶æ‰ä¼šæ‰§è¡Œåˆ‡æ¢
         /// </summary>
         public void ChangeExecutingGroupActiveItem(string itemName)
         {
-			itemNameToChange = itemName;
-		}
-	}
+            itemNameToChange = itemName;
+        }
+    }
 }

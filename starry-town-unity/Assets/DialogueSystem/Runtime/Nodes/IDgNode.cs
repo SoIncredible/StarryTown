@@ -1,15 +1,20 @@
 namespace RPGCore.Dialogue.Runtime
 {
-	public interface IDgNode
+    public interface IDgNode
     {
-		string Guid { get; }
-		DgNodeType Type { get; }
-		//¸ù¾İ¾ßÌå²ÎÊı»ñÈ¡ÏÂÒ»¸ö½Úµã
-		IDgNode GetNext(object param = null);
+        string Guid { get; }
+
+        DgNodeType Type { get; }
+
+        //æ ¹æ®å…·ä½“å‚æ•°è·å–ä¸‹ä¸€ä¸ªèŠ‚ç‚¹
+        IDgNode GetNext(object param = null);
+
         T GetNext<T>(object param = null) where T : IDgNode;
-        //×ª»¯½ÚµãÀàĞÍ
+
+        //è½¬åŒ–èŠ‚ç‚¹ç±»å‹
         T Get<T>() where T : IDgNode;
-        //Ìí¼ÓÒ»¸ö½Úµã
+
+        //æ·»åŠ ä¸€ä¸ªèŠ‚ç‚¹
         void AddNext(IDgNode dgNode);
     }
 }

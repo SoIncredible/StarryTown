@@ -8,55 +8,59 @@ using UnityEngine.UI;
 
 public class DialoguePanel : BasePanel
 {
-	public TMP_Text sentenceContent;
-	public TMP_Text speakerContent;
-	public GameObject choicesContainer;
-	public GameObject choiceItem;
-	public Action<int> OnChoiceSelected;
-	public Action OnMoveNext;
-	private int choiceCount=0;
+    public TMP_Text sentenceContent;
+    public TMP_Text speakerContent;
+    public GameObject choicesContainer;
+    public GameObject choiceItem;
+    public Action<int> OnChoiceSelected;
+    public Action OnMoveNext;
+    private int choiceCount = 0;
 
-	public override void Init()
-	{
-		OnMoveNext?.Invoke();
-	}
+    public override void Init()
+    {
+        OnMoveNext?.Invoke();
+    }
 
-	public void ShowChoices()
-	{
-		choicesContainer.SetActive(true);
-	}
+    public void ShowChoices()
+    {
+        choicesContainer.SetActive(true);
+    }
 
-	public void HideChoices() 
-	{
-		choicesContainer.SetActive(false);
-		for(int i = 0;i<choicesContainer.transform.childCount;i++) 
-		{
-			Destroy(choicesContainer.transform.GetChild(i).gameObject);
-		}
-		choiceCount=0;
-	}
+    public void HideChoices()
+    {
+        choicesContainer.SetActive(false);
+        for (int i = 0; i < choicesContainer.transform.childCount; i++)
+        {
+            Destroy(choicesContainer.transform.GetChild(i).gameObject);
+        }
 
-	public void AddChoiceItem(string content)
-	{
-		GameObject ci = GameObject.Instantiate(choiceItem);
-		ci.GetComponent<Button>().onClick.AddListener(()=> { OnChoiceSelected?.Invoke(ci.GetComponent<ChoiceItem>().Id); });
-		ci.GetComponent<TMP_Text>().text = content;
-		ci.GetComponent<ChoiceItem>().Id = choiceCount;
-		ci.transform.SetParent(choicesContainer.transform);
-		choiceCount++;
-	}
+        choiceCount = 0;
+    }
 
-	public void SetSentenceContent(string content) 
-	{
-		sentenceContent.text = content;
-	}
+    public void AddChoiceItem(string content)
+    {
+        GameObject ci = GameObject.Instantiate(choiceItem);
+        ci.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            OnChoiceSelected?.Invoke(ci.GetComponent<ChoiceItem>().Id);
+        });
+        ci.GetComponent<TMP_Text>().text = content;
+        ci.GetComponent<ChoiceItem>().Id = choiceCount;
+        ci.transform.SetParent(choicesContainer.transform);
+        choiceCount++;
+    }
 
-	protected override void Update()
-	{
-		base.Update();	
-		if (Input.GetKeyDown(KeyCode.Space))
-		{
-			OnMoveNext?.Invoke();
-		}
-	}
+    public void SetSentenceContent(string content)
+    {
+        sentenceContent.text = content;
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            OnMoveNext?.Invoke();
+        }
+    }
 }

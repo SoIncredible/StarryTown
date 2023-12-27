@@ -5,41 +5,52 @@ using UnityEngine;
 
 namespace RPGCore.Dialogue.Runtime
 {
-	/// <summary>
-	/// ¶Ô»°½ÚµãÀàĞÍÃ¶¾Ù
-	/// </summary>
-	public enum DgNodeType 
+    /// <summary>
+    /// å¯¹è¯èŠ‚ç‚¹ç±»å‹æšä¸¾
+    /// </summary>
+    public enum DgNodeType
     {
-        Start,//¿ªÊ¼¶Ô»°½Úµã
-        End,//½áÊø¶Ô»°½Úµã
-        Sentence,//¶Ô»°ÄÚÈİ½Úµã
-        Choice,//¶Ô»°Ñ¡Ïî½Úµã
-        Random,//Ëæ»úÑ¡Ôñ½Úµã
-        Action,//¶¯×÷½Úµã
-        Flow,//Á÷³Ì¿ØÖÆ
+        Start, //å¼€å§‹å¯¹è¯èŠ‚ç‚¹
+        End, //ç»“æŸå¯¹è¯èŠ‚ç‚¹
+        Sentence, //å¯¹è¯å†…å®¹èŠ‚ç‚¹
+        Choice, //å¯¹è¯é€‰é¡¹èŠ‚ç‚¹
+        Random, //éšæœºé€‰æ‹©èŠ‚ç‚¹
+        Action, //åŠ¨ä½œèŠ‚ç‚¹
+        Flow, //æµç¨‹æ§åˆ¶
     }
+
     [Serializable]
-    public class DgNodeBase : ScriptableObject,IDgNode
+    public class DgNodeBase : ScriptableObject, IDgNode
     {
-        //½Úµã±êÊ¶·û
-        [SerializeField]
-        private string guid;
-        public string Guid { get { return guid; }  }
-		//½ÚµãÀàĞÍ
-		[SerializeField]
-		private DgNodeType type;
-        public DgNodeType Type { get { return type; }  }
-        //½ÚµãÃû³Æ
-        [SerializeField]
-        private new string name;
+        //èŠ‚ç‚¹æ ‡è¯†ç¬¦
+        [SerializeField] private string guid;
+
+        public string Guid
+        {
+            get { return guid; }
+        }
+
+        //èŠ‚ç‚¹ç±»å‹
+        [SerializeField] private DgNodeType type;
+
+        public DgNodeType Type
+        {
+            get { return type; }
+        }
+
+        //èŠ‚ç‚¹åç§°
+        [SerializeField] private new string name;
+
         public string Name
         {
             get => name;
             protected set => name = value;
         }
-        //½ÚµãµÄÏÂÒ»¸ö½Úµã ±ØĞëÔÚÊ¹ÓÃÊ±³õÊ¼»¯
+
+        //èŠ‚ç‚¹çš„ä¸‹ä¸€ä¸ªèŠ‚ç‚¹ å¿…é¡»åœ¨ä½¿ç”¨æ—¶åˆå§‹åŒ–
         public List<IDgNode> NextNodes { get; protected set; } = new List<IDgNode>();
-        //½ÚµãµÄÏÂÒ»¸ö½ÚµãµÄGUID ÓÃÀ´¼ÇÂ¼½Úµã¼ä¹ØÏµ
+
+        //èŠ‚ç‚¹çš„ä¸‹ä¸€ä¸ªèŠ‚ç‚¹çš„GUID ç”¨æ¥è®°å½•èŠ‚ç‚¹é—´å…³ç³»
         public List<string> nextNodesGuid = new List<string>();
 #if UNITY_EDITOR
         public Vector2 graphViewPosition;
@@ -51,45 +62,47 @@ namespace RPGCore.Dialogue.Runtime
         }
 
         /// <summary>
-        /// »ñÈ¡µ±Ç°½ÚµãµÄÏÂÒ»¸ö½Úµã
+        /// è·å–å½“å‰èŠ‚ç‚¹çš„ä¸‹ä¸€ä¸ªèŠ‚ç‚¹
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
         public virtual IDgNode GetNext(object param)
-		{
+        {
             return null;
-		}
-		public T GetNext<T>(object param) where T : IDgNode
-		{
+        }
+
+        public T GetNext<T>(object param) where T : IDgNode
+        {
             IDgNode node = GetNext(param);
-            if (node != null) 
+            if (node != null)
             {
                 return (T)node;
             }
+
             return default(T);
-		}
+        }
 
         /// <summary>
-        /// Îªµ±Ç°½ÚµãÌí¼ÓÏÂÒ»¸ö½Úµã
+        /// ä¸ºå½“å‰èŠ‚ç‚¹æ·»åŠ ä¸‹ä¸€ä¸ªèŠ‚ç‚¹
         /// </summary>
         /// <param name="dgNode"></param>
-		public virtual void AddNext(IDgNode dgNode)
-		{
+        public virtual void AddNext(IDgNode dgNode)
+        {
             if (dgNode != null)
             {
-				NextNodes.Add(dgNode);
+                NextNodes.Add(dgNode);
                 nextNodesGuid.Add(dgNode.Guid);
             }
-		}
+        }
 
         /// <summary>
-        /// ½«µ±Ç°½Úµã×ª»¯ÎªÖ¸¶¨ÀàĞÍµÄ½Úµã
+        /// å°†å½“å‰èŠ‚ç‚¹è½¬åŒ–ä¸ºæŒ‡å®šç±»å‹çš„èŠ‚ç‚¹
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-		public T Get<T>() where T : IDgNode
-		{
-			return this.ConvertTo<T>();
-		}
-	}
+        public T Get<T>() where T : IDgNode
+        {
+            return this.ConvertTo<T>();
+        }
+    }
 }

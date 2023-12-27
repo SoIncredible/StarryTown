@@ -10,209 +10,231 @@ using UnityEngine.UIElements;
 
 namespace RPGCore.Dialogue.Editor
 {
-	public class DialogueEditorGraphView : GraphView
-	{
-		private DialogueEditorWindow editorWindow;
-		private DialogueEditorSearchWindow searchWindow;
+    public class DialogueEditorGraphView : GraphView
+    {
+        private DialogueEditorWindow editorWindow;
+        private DialogueEditorSearchWindow searchWindow;
 
-		public DialogueEditorGraphView(DialogueEditorWindow window)
-		{
-			this.editorWindow = window;
-			//AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Scripts/DialogueSystem/Editor/UI/DialogueGraphView.uss")
-			styleSheets.Add(Resources.Load<StyleSheet>("DialogueGraphView"));
-			SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
-			this.AddManipulator(new ContentDragger());
-			this.AddManipulator(new SelectionDragger());
-			this.AddManipulator(new RectangleSelector());
-			Insert(0, new GridBackground());
-			MakeSearchTree();
-		}
+        public DialogueEditorGraphView(DialogueEditorWindow window)
+        {
+            this.editorWindow = window;
+            //AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Scripts/DialogueSystem/Editor/UI/DialogueGraphView.uss")
+            styleSheets.Add(Resources.Load<StyleSheet>("DialogueGraphView"));
+            SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
+            this.AddManipulator(new ContentDragger());
+            this.AddManipulator(new SelectionDragger());
+            this.AddManipulator(new RectangleSelector());
+            Insert(0, new GridBackground());
+            MakeSearchTree();
+        }
 
-		private void MakeSearchTree()
-		{
-			searchWindow = ScriptableObject.CreateInstance<DialogueEditorSearchWindow>();
-			searchWindow.Init(editorWindow, this);
-			nodeCreationRequest = context =>
-			{
-				if (editorWindow.CanEditor)
-					SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), searchWindow);
-			};
-		}
+        private void MakeSearchTree()
+        {
+            searchWindow = ScriptableObject.CreateInstance<DialogueEditorSearchWindow>();
+            searchWindow.Init(editorWindow, this);
+            nodeCreationRequest = context =>
+            {
+                if (editorWindow.CanEditor)
+                    SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), searchWindow);
+            };
+        }
 
-		//Á¬½ÓÁ½¸ö½ÚµãÊ±µ÷ÓÃ »ñÈ¡µ½µ±Ç°½Úµã¶Ë¿ÚÄÜ¹»Á¬½Óµ½µÄÆäÓà½Úµã¶Ë¿Ú
-		public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
-		{
-			List<Port> compatiblePorts = new List<Port>();
-			ports.ForEach(
-				(port) =>
-				{
-					if (startPort.node != port.node && //²»ÄÜ×Ô¼ºÁ¬½Ó×Ô¼º
-						startPort.direction != port.direction)//²»ÄÜinputÁ¬input outputÁ¬output
-					{
-						compatiblePorts.Add(port);
-					}
-				}
-			);
-			return compatiblePorts;
-		}
+        //è¿æ¥ä¸¤ä¸ªèŠ‚ç‚¹æ—¶è°ƒç”¨ è·å–åˆ°å½“å‰èŠ‚ç‚¹ç«¯å£èƒ½å¤Ÿè¿æ¥åˆ°çš„å…¶ä½™èŠ‚ç‚¹ç«¯å£
+        public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
+        {
+            List<Port> compatiblePorts = new List<Port>();
+            ports.ForEach(
+                (port) =>
+                {
+                    if (startPort.node != port.node && //ä¸èƒ½è‡ªå·±è¿æ¥è‡ªå·±
+                        startPort.direction != port.direction) //ä¸èƒ½inputè¿input outputè¿output
+                    {
+                        compatiblePorts.Add(port);
+                    }
+                }
+            );
+            return compatiblePorts;
+        }
 
-		public DialogueGraphNode MakeNode(DgNodeBase dgNode, Vector2 position)
-		{
-			DialogueGraphNode graphNode = GenerateGraphNode(dgNode, editorWindow);
-			graphNode.SetPosition(new Rect(position, graphNode.GetPosition().size));
-			AddElement(graphNode);
-			return graphNode;
-		}
+        public DialogueGraphNode MakeNode(DgNodeBase dgNode, Vector2 position)
+        {
+            DialogueGraphNode graphNode = GenerateGraphNode(dgNode, editorWindow);
+            graphNode.SetPosition(new Rect(position, graphNode.GetPosition().size));
+            AddElement(graphNode);
+            return graphNode;
+        }
 
-		public Edge MakeEdge(Port oput, Port iput)
-		{
-			var edge = new Edge { output = oput, input = iput };
-			edge?.input.Connect(edge);
-			edge?.output.Connect(edge);
-			AddElement(edge);
-			return edge;
-		}
+        public Edge MakeEdge(Port oput, Port iput)
+        {
+            var edge = new Edge { output = oput, input = iput };
+            edge?.input.Connect(edge);
+            edge?.output.Connect(edge);
+            AddElement(edge);
+            return edge;
+        }
 
-		public Edge MakeEdge(DialogueGraphNode outputNode, DialogueGraphNode inputNode, int outputPortIndex = 0)
-		{
-			return MakeEdge(outputNode?.outputPorts[outputPortIndex], inputNode?.inputPort);
-		}
+        public Edge MakeEdge(DialogueGraphNode outputNode, DialogueGraphNode inputNode, int outputPortIndex = 0)
+        {
+            return MakeEdge(outputNode?.outputPorts[outputPortIndex], inputNode?.inputPort);
+        }
 
-		private DialogueGraphNode GenerateGraphNode(DgNodeBase nodeData, DialogueEditorWindow editorWindow)
-		{
-			List<Type> graphNodeTypes = new List<Type>();
-			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.GetName().Name.Contains("Assembly")))
-			{
-				List<Type> types = assembly.GetTypes().Where(type =>
-				{
-					return type.IsClass && !type.IsAbstract && type.GetCustomAttribute<DialogueGraphNodeAttribute>() != null;
-				}).ToList();
-				graphNodeTypes.AddRange(types);
-			}
-			foreach (var graphNodeType in graphNodeTypes)
-			{
-				if (graphNodeType.GetCustomAttribute<DialogueGraphNodeAttribute>().Type == nodeData.Type)
-				{
-					return Activator.CreateInstance(graphNodeType, args: new object[] { nodeData, editorWindow }) as DialogueGraphNode;
-				}
-			}
-			return null;
-		}
+        private DialogueGraphNode GenerateGraphNode(DgNodeBase nodeData, DialogueEditorWindow editorWindow)
+        {
+            List<Type> graphNodeTypes = new List<Type>();
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()
+                         .Where(assembly => assembly.GetName().Name.Contains("Assembly")))
+            {
+                List<Type> types = assembly.GetTypes().Where(type =>
+                {
+                    return type.IsClass && !type.IsAbstract &&
+                           type.GetCustomAttribute<DialogueGraphNodeAttribute>() != null;
+                }).ToList();
+                graphNodeTypes.AddRange(types);
+            }
 
-		/// <summary>
-		/// Éú³É½ÚµãÊÓÍ¼
-		/// </summary>
-		/// <param name="itemData"></param>
-		public void GenerateNodeGraphView(DialogueItemDataSO itemData)
-		{
-			if (itemData == null)
-			{
-				return;
-			}
-			//Éú³ÉÄ¬ÈÏµÄ½Úµã
-			if (itemData.dgNodes.Count == 0)
-			{
-				var start = MakeNode(DialogueEditorUtility.CreateDialogueNodeData<DgNodeStart>(editorWindow.CurrentOpenedGroupData), new Vector2(350, 300));
-				var end = MakeNode(DialogueEditorUtility.CreateDialogueNodeData<DgNodeEnd>(editorWindow.CurrentOpenedGroupData), new Vector2(500, 300));
-				MakeEdge(start, end);
-				return;
-			}
-			//Éú³É½Úµã
-			List<DgNodeBase> nullNodes = new List<DgNodeBase>();
-			foreach (var node in itemData.dgNodes)
-			{
-				if(node==null)nullNodes.Add(node);
-				else MakeNode(node, node.graphViewPosition);
-			}
-			//É¾³ıÄªÃûÆäÃî³öÏÖµÄ¿Õ½Úµã ÎÊÌâ¿ÉÄÜ³öÏÖÔÚSaveNodeGraphViewÖĞ
-			foreach (var node in nullNodes) 
-			{
-				itemData.dgNodes.Remove(node);
-			}
-			//Á¬½Ó½Úµã
-			var graphNodeList = nodes.Select(node => node as DialogueGraphNode).ToList();
-			//var dataNodeList = graphNodeList.Select(node=>node.nodeData).ToList();
-			foreach (var node in graphNodeList)
-			{
-				Port outputPort = null;
-				Port inputPort = null;
-				int outputPortIndex = 0;
-				foreach (var guid in node.nodeData.nextNodesGuid)
-				{
-					if (!string.IsNullOrWhiteSpace(guid))
-					{
-						var nextgNode = graphNodeList.Find(node => node.nodeData.Guid == guid);
-						outputPort = node.outputPorts[outputPortIndex];
-						inputPort = nextgNode.inputPort;
-						MakeEdge(outputPort, inputPort);
-					}
-					if (node.outputPorts.Count - 1 > outputPortIndex)
-					{
-						outputPortIndex++;
-					}
-				}
-			}
-			UpdateViewTransform(itemData.GraphViewPortPosition, itemData.GraphViewPortScale);
-		}
+            foreach (var graphNodeType in graphNodeTypes)
+            {
+                if (graphNodeType.GetCustomAttribute<DialogueGraphNodeAttribute>().Type == nodeData.Type)
+                {
+                    return Activator.CreateInstance(graphNodeType, args: new object[] { nodeData, editorWindow }) as
+                        DialogueGraphNode;
+                }
+            }
 
-		public void SaveNodeGraphView()
-		{
-			if (editorWindow.CurrentOpenedGroupData == null) return;
-			//½«ÒÆ³ıµÄ½Úµã´Ó×ÊÔ´ÖĞÉ¾³ı
-			List<DgNodeBase> nodesToRemove = new List<DgNodeBase>();
-			foreach (var node in editorWindow.CurrentOpenedGroupData.GetOpenedEditorItem().dgNodes)
-			{
-				if (!nodes.Select(node => (node as DialogueGraphNode).nodeData).Contains(node))
-				{
-					nodesToRemove.Add(node);
-				}
-			}
-			foreach (var rnode in nodesToRemove)
-			{
-				DialogueEditorUtility.DeleteDialogueNodeData(rnode);
-				editorWindow.CurrentOpenedGroupData.GetOpenedEditorItem().dgNodes.Remove(rnode);
-			}
-			//±£´æÎ»ÖÃ²¢Çå¿ÕÁ´½Ó¹ØÏµ
-			foreach (var node in nodes.Select(node => node as DialogueGraphNode))
-			{
-				node.nodeData.graphViewPosition = node.GetPosition().position;
-				node.nodeData.nextNodesGuid.Clear();
-			}
-			//±£´æÁ´½ÓĞÅÏ¢
-			foreach (var edge in edges.ToList())
-			{
-				if (edge.output == null || edge.input == null) break;
-				var outputNode = edge.output.node as DialogueGraphNode;
-				var inputNode = edge.input.node as DialogueGraphNode;
-				int outputPortIndex = outputNode.outputPorts.FindIndex(port => port.portName == edge.output.portName);
-				if (edge.output.capacity == Port.Capacity.Multi)
-				{
-					outputNode.nodeData.nextNodesGuid.Add(inputNode.nodeData.Guid);
-				}
-				else
-				{
-					if (outputPortIndex > outputNode.nodeData.nextNodesGuid.Count - 1)
-					{
-						int count = outputPortIndex - outputNode.nodeData.nextNodesGuid.Count + 1;
-						outputNode.nodeData.nextNodesGuid.AddRange(new string[count]);
-					}
-					outputNode.nodeData.nextNodesGuid[outputPortIndex] = inputNode.nodeData.Guid;
-				}
-			}
-			//±£´æµ±Ç°graphviewµÄÎ»ÖÃËõ·ÅĞÅÏ¢
-			editorWindow.CurrentOpenedGroupData.GetOpenedEditorItem().SaveGraphViewPortInfomation(viewTransform.position, viewTransform.scale);
-		}
+            return null;
+        }
 
-		public void ClearGraphView()
-		{
-			foreach (var node in nodes)
-			{
-				RemoveElement(node);
-			}
-			foreach (var edge in edges)
-			{
-				RemoveElement(edge);
-			}
-		}
-	}
+        /// <summary>
+        /// ç”ŸæˆèŠ‚ç‚¹è§†å›¾
+        /// </summary>
+        /// <param name="itemData"></param>
+        public void GenerateNodeGraphView(DialogueItemDataSO itemData)
+        {
+            if (itemData == null)
+            {
+                return;
+            }
+
+            //ç”Ÿæˆé»˜è®¤çš„èŠ‚ç‚¹
+            if (itemData.dgNodes.Count == 0)
+            {
+                var start = MakeNode(
+                    DialogueEditorUtility.CreateDialogueNodeData<DgNodeStart>(editorWindow.CurrentOpenedGroupData),
+                    new Vector2(350, 300));
+                var end = MakeNode(
+                    DialogueEditorUtility.CreateDialogueNodeData<DgNodeEnd>(editorWindow.CurrentOpenedGroupData),
+                    new Vector2(500, 300));
+                MakeEdge(start, end);
+                return;
+            }
+
+            //ç”ŸæˆèŠ‚ç‚¹
+            List<DgNodeBase> nullNodes = new List<DgNodeBase>();
+            foreach (var node in itemData.dgNodes)
+            {
+                if (node == null) nullNodes.Add(node);
+                else MakeNode(node, node.graphViewPosition);
+            }
+
+            //åˆ é™¤è«åå…¶å¦™å‡ºç°çš„ç©ºèŠ‚ç‚¹ é—®é¢˜å¯èƒ½å‡ºç°åœ¨SaveNodeGraphViewä¸­
+            foreach (var node in nullNodes)
+            {
+                itemData.dgNodes.Remove(node);
+            }
+
+            //è¿æ¥èŠ‚ç‚¹
+            var graphNodeList = nodes.Select(node => node as DialogueGraphNode).ToList();
+            //var dataNodeList = graphNodeList.Select(node=>node.nodeData).ToList();
+            foreach (var node in graphNodeList)
+            {
+                Port outputPort = null;
+                Port inputPort = null;
+                int outputPortIndex = 0;
+                foreach (var guid in node.nodeData.nextNodesGuid)
+                {
+                    if (!string.IsNullOrWhiteSpace(guid))
+                    {
+                        var nextgNode = graphNodeList.Find(node => node.nodeData.Guid == guid);
+                        outputPort = node.outputPorts[outputPortIndex];
+                        inputPort = nextgNode.inputPort;
+                        MakeEdge(outputPort, inputPort);
+                    }
+
+                    if (node.outputPorts.Count - 1 > outputPortIndex)
+                    {
+                        outputPortIndex++;
+                    }
+                }
+            }
+
+            UpdateViewTransform(itemData.GraphViewPortPosition, itemData.GraphViewPortScale);
+        }
+
+        public void SaveNodeGraphView()
+        {
+            if (editorWindow.CurrentOpenedGroupData == null) return;
+            //å°†ç§»é™¤çš„èŠ‚ç‚¹ä»èµ„æºä¸­åˆ é™¤
+            List<DgNodeBase> nodesToRemove = new List<DgNodeBase>();
+            foreach (var node in editorWindow.CurrentOpenedGroupData.GetOpenedEditorItem().dgNodes)
+            {
+                if (!nodes.Select(node => (node as DialogueGraphNode).nodeData).Contains(node))
+                {
+                    nodesToRemove.Add(node);
+                }
+            }
+
+            foreach (var rnode in nodesToRemove)
+            {
+                DialogueEditorUtility.DeleteDialogueNodeData(rnode);
+                editorWindow.CurrentOpenedGroupData.GetOpenedEditorItem().dgNodes.Remove(rnode);
+            }
+
+            //ä¿å­˜ä½ç½®å¹¶æ¸…ç©ºé“¾æ¥å…³ç³»
+            foreach (var node in nodes.Select(node => node as DialogueGraphNode))
+            {
+                node.nodeData.graphViewPosition = node.GetPosition().position;
+                node.nodeData.nextNodesGuid.Clear();
+            }
+
+            //ä¿å­˜é“¾æ¥ä¿¡æ¯
+            foreach (var edge in edges.ToList())
+            {
+                if (edge.output == null || edge.input == null) break;
+                var outputNode = edge.output.node as DialogueGraphNode;
+                var inputNode = edge.input.node as DialogueGraphNode;
+                int outputPortIndex = outputNode.outputPorts.FindIndex(port => port.portName == edge.output.portName);
+                if (edge.output.capacity == Port.Capacity.Multi)
+                {
+                    outputNode.nodeData.nextNodesGuid.Add(inputNode.nodeData.Guid);
+                }
+                else
+                {
+                    if (outputPortIndex > outputNode.nodeData.nextNodesGuid.Count - 1)
+                    {
+                        int count = outputPortIndex - outputNode.nodeData.nextNodesGuid.Count + 1;
+                        outputNode.nodeData.nextNodesGuid.AddRange(new string[count]);
+                    }
+
+                    outputNode.nodeData.nextNodesGuid[outputPortIndex] = inputNode.nodeData.Guid;
+                }
+            }
+
+            //ä¿å­˜å½“å‰graphviewçš„ä½ç½®ç¼©æ”¾ä¿¡æ¯
+            editorWindow.CurrentOpenedGroupData.GetOpenedEditorItem()
+                .SaveGraphViewPortInfomation(viewTransform.position, viewTransform.scale);
+        }
+
+        public void ClearGraphView()
+        {
+            foreach (var node in nodes)
+            {
+                RemoveElement(node);
+            }
+
+            foreach (var edge in edges)
+            {
+                RemoveElement(edge);
+            }
+        }
+    }
 }

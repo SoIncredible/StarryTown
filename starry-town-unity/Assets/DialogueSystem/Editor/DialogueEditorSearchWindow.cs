@@ -10,131 +10,142 @@ using UnityEngine.UIElements;
 
 namespace RPGCore.Dialogue.Editor
 {
-	public class DialogueEditorSearchWindow : ScriptableObject, ISearchWindowProvider
-	{
-		private DialogueEditorGraphView graphView;
-		private DialogueEditorWindow editorWindow;
+    public class DialogueEditorSearchWindow : ScriptableObject, ISearchWindowProvider
+    {
+        private DialogueEditorGraphView graphView;
+        private DialogueEditorWindow editorWindow;
 
-		public void Init(DialogueEditorWindow editorWindow, DialogueEditorGraphView graphView)
-		{
-			this.editorWindow = editorWindow;
-			this.graphView = graphView;
-		}
+        public void Init(DialogueEditorWindow editorWindow, DialogueEditorGraphView graphView)
+        {
+            this.editorWindow = editorWindow;
+            this.graphView = graphView;
+        }
 
-		public List<SearchTreeEntry> CreateSearchTree(SearchWindowContext context)
-		{
-			List<SearchTreeEntry> searchTreeEntries = new List<SearchTreeEntry>();
-			searchTreeEntries.Add(new SearchTreeGroupEntry(new GUIContent("Dialogue Nodes"), 0));
-			List<Type> types = new List<Type>();
-			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.GetName().Name.Contains("Assembly")))
-			{
-				List<Type> result = assembly.GetTypes().Where(type =>
-				{
-					return type.IsClass && !type.IsAbstract && type.GetCustomAttribute<DialogueNodeAttribute>() != null;
-				}).ToList();
-				types.AddRange(result);
-			}
-			//Í¨¹ı½ÚµãÊôĞÔÉèÖÃµÄÂ·¾¶ºÍÃû³ÆÀ´¹¹ÔìÒ»¸öÊ÷ĞÎ½á¹¹½Úµã·ÖÀà
-			List<SearchWindowMenuItem> mainMenu = new List<SearchWindowMenuItem>();
-			foreach (Type type in types)
-			{
-				//»ñÈ¡½ÚµãÊôĞÔµÄNodePath
-				string nodePath = type.GetCustomAttribute<DialogueNodeAttribute>()?.Path;
-				if (nodePath == null) continue;
-				//½«Â·¾¶ÖĞÃ¿Ò»Ïî·Ö¸î
-				string[] menus = nodePath.Split('/');
-				//±éÀú·Ö¸îµÄÃ¿Ò»ÏîµÄÃû³Æ
-				List<SearchWindowMenuItem> currentFloor = mainMenu;
-				for (int i = 0; i < menus.Length; i++)
-				{
-					string currentName = menus[i];
-					bool exist = false;
-					//»¹²»ÊÇ×îºóÒ»ÏîËµÃ÷µ±Ç°Ïî»¹ÊÇ²Ëµ¥Ïî
-					bool lastFloor = (i == (menus.Length - 1));
-					//Èç¹ûµ±Ç°ÏîÄÜ¹»ÔÚµ±Ç°²ãÖĞÕÒµ½ËµÃ÷µ±Ç°ÏîÒÑ¾­´æÔÚ
-					SearchWindowMenuItem temp = currentFloor.Find(item => item.Name == currentName);
-					if (temp != null)
-					{
-						exist = true;
-						//½«µ±Ç°ÏîÏÂµÄ×ÓÏî×÷ÎªÏÂÒ»²ã
-						currentFloor = temp.ChildItems;
-					}
-					//µ±Ç°Ïî²»´æÔÚ ¾Í¹¹Ôìµ±Ç°Ïî²¢¼ÓÈëµ½µ±Ç°²ã¼¶ÖĞ
-					if (!exist)
-					{
-						SearchWindowMenuItem item = new SearchWindowMenuItem() { Name = currentName, IsNode = lastFloor };
-						currentFloor.Add(item);
-						//Èç¹ûµ±Ç°Ïî²»ÊÇ½Úµã ÇÒÃ»ÓĞÏÂÒ»²ã
-						if (!item.IsNode && item.ChildItems == null)
-						{
-							//¹¹ÔìĞÂµÄ×Ó¼¶²ã
-							item.ChildItems = new List<SearchWindowMenuItem>();
-						}
-						if (item.IsNode) item.type = type;
-						currentFloor = item.ChildItems;
-					}
-				}
-			}
-			MakeSearchTree(mainMenu, 1, ref searchTreeEntries);
-			return searchTreeEntries;
-		}
+        public List<SearchTreeEntry> CreateSearchTree(SearchWindowContext context)
+        {
+            List<SearchTreeEntry> searchTreeEntries = new List<SearchTreeEntry>();
+            searchTreeEntries.Add(new SearchTreeGroupEntry(new GUIContent("Dialogue Nodes"), 0));
+            List<Type> types = new List<Type>();
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()
+                         .Where(assembly => assembly.GetName().Name.Contains("Assembly")))
+            {
+                List<Type> result = assembly.GetTypes().Where(type =>
+                {
+                    return type.IsClass && !type.IsAbstract &&
+                           type.GetCustomAttribute<DialogueNodeAttribute>() != null;
+                }).ToList();
+                types.AddRange(result);
+            }
 
-		public bool OnSelectEntry(SearchTreeEntry SearchTreeEntry, SearchWindowContext context)
-		{
-			//»ñÈ¡µ½µ±Ç°Êó±êµÄÎ»ÖÃ
-			var worldMousePosition = editorWindow.rootVisualElement.ChangeCoordinatesTo(
-				editorWindow.rootVisualElement.parent,
-				context.screenMousePosition - editorWindow.position.position
-			);
-			var localMousePosition = graphView.contentViewContainer.WorldToLocal(worldMousePosition);
-			Type type = (Type)SearchTreeEntry.userData;
-			DialogueGraphNode node = graphView.MakeNode(DialogueEditorUtility.CreateDialogueNodeData(type, editorWindow.CurrentOpenedGroupData), localMousePosition);
-			//Undo.RegisterCreatedObjectUndo(node, "");
-			return true;
-		}
+            //é€šè¿‡èŠ‚ç‚¹å±æ€§è®¾ç½®çš„è·¯å¾„å’Œåç§°æ¥æ„é€ ä¸€ä¸ªæ ‘å½¢ç»“æ„èŠ‚ç‚¹åˆ†ç±»
+            List<SearchWindowMenuItem> mainMenu = new List<SearchWindowMenuItem>();
+            foreach (Type type in types)
+            {
+                //è·å–èŠ‚ç‚¹å±æ€§çš„NodePath
+                string nodePath = type.GetCustomAttribute<DialogueNodeAttribute>()?.Path;
+                if (nodePath == null) continue;
+                //å°†è·¯å¾„ä¸­æ¯ä¸€é¡¹åˆ†å‰²
+                string[] menus = nodePath.Split('/');
+                //éå†åˆ†å‰²çš„æ¯ä¸€é¡¹çš„åç§°
+                List<SearchWindowMenuItem> currentFloor = mainMenu;
+                for (int i = 0; i < menus.Length; i++)
+                {
+                    string currentName = menus[i];
+                    bool exist = false;
+                    //è¿˜ä¸æ˜¯æœ€åä¸€é¡¹è¯´æ˜å½“å‰é¡¹è¿˜æ˜¯èœå•é¡¹
+                    bool lastFloor = (i == (menus.Length - 1));
+                    //å¦‚æœå½“å‰é¡¹èƒ½å¤Ÿåœ¨å½“å‰å±‚ä¸­æ‰¾åˆ°è¯´æ˜å½“å‰é¡¹å·²ç»å­˜åœ¨
+                    SearchWindowMenuItem temp = currentFloor.Find(item => item.Name == currentName);
+                    if (temp != null)
+                    {
+                        exist = true;
+                        //å°†å½“å‰é¡¹ä¸‹çš„å­é¡¹ä½œä¸ºä¸‹ä¸€å±‚
+                        currentFloor = temp.ChildItems;
+                    }
 
-		//¸ù¾İ¹¹ÔìµÄ½ÚµãÄ¿Â¼½á¹¹¹¹Ôì×îÖÕµÄ½Úµã´´½¨Ä¿Â¼
-		private void MakeSearchTree(List<SearchWindowMenuItem> floor, int floorIndex, ref List<SearchTreeEntry> treeEntries)
-		{
-			foreach (var item in floor)
-			{
-				//µ±Ç°Ïî²»ÊÇ½Úµã
-				if (!item.IsNode)
-				{
-					//¹¹ÔìÒ»²ã
-					SearchTreeEntry entry = new SearchTreeGroupEntry(new GUIContent(item.Name))
-					{
-						level = floorIndex,
-					};
-					treeEntries.Add(entry);
-					//½øÈëµ±Ç°ÏîµÄÏÂÒ»²ã¼ÌĞø¹¹Ôì
-					MakeSearchTree(item.ChildItems, floorIndex + 1, ref treeEntries);
-				}
-				//µ±Ç°ÏîÊÇ½Úµã
-				else
-				{
-					//¹¹Ôì½ÚµãÏî »Øµ½¶¥²ã ¼ÌĞø¹¹Ôì
-					SearchTreeEntry entry = new SearchTreeEntry(new GUIContent("     " + item.Name))
-					{
-						userData = item.type,
-						level = floorIndex
-					};
-					treeEntries.Add(entry);
-				}
-			}
-		}
+                    //å½“å‰é¡¹ä¸å­˜åœ¨ å°±æ„é€ å½“å‰é¡¹å¹¶åŠ å…¥åˆ°å½“å‰å±‚çº§ä¸­
+                    if (!exist)
+                    {
+                        SearchWindowMenuItem item = new SearchWindowMenuItem()
+                            { Name = currentName, IsNode = lastFloor };
+                        currentFloor.Add(item);
+                        //å¦‚æœå½“å‰é¡¹ä¸æ˜¯èŠ‚ç‚¹ ä¸”æ²¡æœ‰ä¸‹ä¸€å±‚
+                        if (!item.IsNode && item.ChildItems == null)
+                        {
+                            //æ„é€ æ–°çš„å­çº§å±‚
+                            item.ChildItems = new List<SearchWindowMenuItem>();
+                        }
 
-		//¹¹ÔìSearchWindowÊ± ÓÃÀ´´æ´¢½ÚµãÄ¿Â¼µÄ½á¹¹
-		public class SearchWindowMenuItem
-		{
-			//Ä¿Â¼ÏîµÄÃû³Æ
-			public string Name { get; set; }
+                        if (item.IsNode) item.type = type;
+                        currentFloor = item.ChildItems;
+                    }
+                }
+            }
 
-			//µ±Ç°Ä¿Â¼ÏîÊÇ·ñÊÇ½Úµã
-			public bool IsNode { get; set; }
+            MakeSearchTree(mainMenu, 1, ref searchTreeEntries);
+            return searchTreeEntries;
+        }
 
-			public Type type;
-			public List<SearchWindowMenuItem> ChildItems { get; set; }
-		}
-	}
+        public bool OnSelectEntry(SearchTreeEntry SearchTreeEntry, SearchWindowContext context)
+        {
+            //è·å–åˆ°å½“å‰é¼ æ ‡çš„ä½ç½®
+            var worldMousePosition = editorWindow.rootVisualElement.ChangeCoordinatesTo(
+                editorWindow.rootVisualElement.parent,
+                context.screenMousePosition - editorWindow.position.position
+            );
+            var localMousePosition = graphView.contentViewContainer.WorldToLocal(worldMousePosition);
+            Type type = (Type)SearchTreeEntry.userData;
+            DialogueGraphNode node =
+                graphView.MakeNode(
+                    DialogueEditorUtility.CreateDialogueNodeData(type, editorWindow.CurrentOpenedGroupData),
+                    localMousePosition);
+            //Undo.RegisterCreatedObjectUndo(node, "");
+            return true;
+        }
+
+        //æ ¹æ®æ„é€ çš„èŠ‚ç‚¹ç›®å½•ç»“æ„æ„é€ æœ€ç»ˆçš„èŠ‚ç‚¹åˆ›å»ºç›®å½•
+        private void MakeSearchTree(List<SearchWindowMenuItem> floor, int floorIndex,
+            ref List<SearchTreeEntry> treeEntries)
+        {
+            foreach (var item in floor)
+            {
+                //å½“å‰é¡¹ä¸æ˜¯èŠ‚ç‚¹
+                if (!item.IsNode)
+                {
+                    //æ„é€ ä¸€å±‚
+                    SearchTreeEntry entry = new SearchTreeGroupEntry(new GUIContent(item.Name))
+                    {
+                        level = floorIndex,
+                    };
+                    treeEntries.Add(entry);
+                    //è¿›å…¥å½“å‰é¡¹çš„ä¸‹ä¸€å±‚ç»§ç»­æ„é€ 
+                    MakeSearchTree(item.ChildItems, floorIndex + 1, ref treeEntries);
+                }
+                //å½“å‰é¡¹æ˜¯èŠ‚ç‚¹
+                else
+                {
+                    //æ„é€ èŠ‚ç‚¹é¡¹ å›åˆ°é¡¶å±‚ ç»§ç»­æ„é€ 
+                    SearchTreeEntry entry = new SearchTreeEntry(new GUIContent("     " + item.Name))
+                    {
+                        userData = item.type,
+                        level = floorIndex
+                    };
+                    treeEntries.Add(entry);
+                }
+            }
+        }
+
+        //æ„é€ SearchWindowæ—¶ ç”¨æ¥å­˜å‚¨èŠ‚ç‚¹ç›®å½•çš„ç»“æ„
+        public class SearchWindowMenuItem
+        {
+            //ç›®å½•é¡¹çš„åç§°
+            public string Name { get; set; }
+
+            //å½“å‰ç›®å½•é¡¹æ˜¯å¦æ˜¯èŠ‚ç‚¹
+            public bool IsNode { get; set; }
+
+            public Type type;
+            public List<SearchWindowMenuItem> ChildItems { get; set; }
+        }
+    }
 }

@@ -5,61 +5,62 @@ using UnityEngine.Events;
 
 namespace RPGCore.UI
 {
-	//ËùÓĞPanelµÄ»ùÀà
-	public abstract class BasePanel : MonoBehaviour
-	{
-		private CanvasGroup canvasGroup;
+    //æ‰€æœ‰Panelçš„åŸºç±»
+    public abstract class BasePanel : MonoBehaviour
+    {
+        private CanvasGroup canvasGroup;
 
-		private float alphaSpeed = 10;
-		private bool isShow = false;
+        private float alphaSpeed = 10;
+        private bool isShow = false;
 
-		//µ±Ãæ°åÒş²ØÊ±Òª´¥·¢ÊÂ¼ş
-		private UnityAction hideCallback;
+        //å½“é¢æ¿éšè—æ—¶è¦è§¦å‘äº‹ä»¶
+        private UnityAction hideCallback;
 
-		protected virtual void Awake()
-		{
-			canvasGroup = GetComponent<CanvasGroup>();
-			if (canvasGroup == null)
-			{
-				canvasGroup = gameObject.AddComponent<CanvasGroup>();
-			}
-			Init();
-		}
+        protected virtual void Awake()
+        {
+            canvasGroup = GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+            {
+                canvasGroup = gameObject.AddComponent<CanvasGroup>();
+            }
 
-		public abstract void Init();
+            Init();
+        }
 
-		public virtual void Show()
-		{
-			isShow = true;
-			canvasGroup.alpha = 0;
-		}
+        public abstract void Init();
 
-		public virtual void Hide(UnityAction callback)
-		{
-			isShow = false;
-			canvasGroup.alpha = 1;
-			hideCallback = callback;
-		}
+        public virtual void Show()
+        {
+            isShow = true;
+            canvasGroup.alpha = 0;
+        }
 
-		//ÔÚUpdateÖĞ Ê¹ÓÃCanvasGroupµÄalphaÊôĞÔ¿ØÖÆÕû¸öPanelµÄÏÔÒş
-		protected virtual void Update()
-		{
-			if (isShow && canvasGroup.alpha != 1)
-			{
-				canvasGroup.alpha += alphaSpeed * Time.deltaTime;
-				if (canvasGroup.alpha > 1)
-				{
-					canvasGroup.alpha = 1;
-				}
-			}
-			else if (!isShow)
-			{
-				canvasGroup.alpha -= alphaSpeed * Time.deltaTime;
-				if (canvasGroup.alpha <= 0)
-				{
-					hideCallback?.Invoke();
-				}
-			}
-		}
-	}
+        public virtual void Hide(UnityAction callback)
+        {
+            isShow = false;
+            canvasGroup.alpha = 1;
+            hideCallback = callback;
+        }
+
+        //åœ¨Updateä¸­ ä½¿ç”¨CanvasGroupçš„alphaå±æ€§æ§åˆ¶æ•´ä¸ªPanelçš„æ˜¾éš
+        protected virtual void Update()
+        {
+            if (isShow && canvasGroup.alpha != 1)
+            {
+                canvasGroup.alpha += alphaSpeed * Time.deltaTime;
+                if (canvasGroup.alpha > 1)
+                {
+                    canvasGroup.alpha = 1;
+                }
+            }
+            else if (!isShow)
+            {
+                canvasGroup.alpha -= alphaSpeed * Time.deltaTime;
+                if (canvasGroup.alpha <= 0)
+                {
+                    hideCallback?.Invoke();
+                }
+            }
+        }
+    }
 }

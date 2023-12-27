@@ -13,10 +13,7 @@ namespace RPGCore.Dialogue.Runtime
         public DgNodeActionChangeDialogueItem()
         {
             Name = "Change Dialogue Item";
-            SetAction(() =>
-            {
-                DialogueManager.Instance.ChangeExecutingGroupActiveItem(ItemName);
-            });
+            SetAction(() => { DialogueManager.Instance.ChangeExecutingGroupActiveItem(ItemName); });
         }
     }
 }

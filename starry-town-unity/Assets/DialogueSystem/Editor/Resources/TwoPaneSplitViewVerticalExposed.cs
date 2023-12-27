@@ -5,10 +5,12 @@ using UnityEngine.UIElements;
 
 public class TwoPaneSplitViewVerticalExposed : TwoPaneSplitView
 {
-	public new class UxmlFactory : UxmlFactory<TwoPaneSplitViewVerticalExposed, UxmlTraits>
-	{ }
-	public TwoPaneSplitViewVerticalExposed()
-	{
-		this.orientation = TwoPaneSplitViewOrientation.Vertical;
-	}
+    public new class UxmlFactory : UxmlFactory<TwoPaneSplitViewVerticalExposed, UxmlTraits>
+    {
+    }
+
+    public TwoPaneSplitViewVerticalExposed()
+    {
+        this.orientation = TwoPaneSplitViewOrientation.Vertical;
+    }
 }

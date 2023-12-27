@@ -6,11 +6,12 @@ using UnityEngine.UIElements;
 
 namespace RPGCore.Dialogue.Editor
 {
-    public enum EditorDialogueType 
+    public enum EditorDialogueType
     {
         Message,
         CreateAsset
     }
+
     public class EditorDialogueWindow
     {
         public VisualTreeAsset DialogueVisualTreeAsset { get; private set; }
@@ -18,12 +19,15 @@ namespace RPGCore.Dialogue.Editor
 
         private TemplateContainer template;
 
-        //¶Ô»°¿òÄÚÖÃµÄ²»Í¬µÄÃæ°å
+        //å¯¹è¯æ¡†å†…ç½®çš„ä¸åŒçš„é¢æ¿
         private VisualElement messagePanel;
+
         private VisualElement createAssetPanel;
-        //µ±Ç°¶Ô»°¿ò´ò¿ªµÄÃæ°å
+
+        //å½“å‰å¯¹è¯æ¡†æ‰“å¼€çš„é¢æ¿
         private VisualElement currentOpendPanel;
-        //ËùÓĞÃæ°åÉÏµÄ¿Ø¼ş
+
+        //æ‰€æœ‰é¢æ¿ä¸Šçš„æ§ä»¶
         private Label dialogueTitleLabel;
         private Label messagePanelmessageLabel;
         private TextField createAssetNameField;
@@ -31,23 +35,25 @@ namespace RPGCore.Dialogue.Editor
         private Button okButton;
         private Button cancelButton;
 
-        //°´Å¥ÊÂ¼ş
+        //æŒ‰é’®äº‹ä»¶
         private EventCallback<ClickEvent> okEvent;
-		private EventCallback<ClickEvent> cancelEvent;
-		public EditorDialogueWindow(VisualElement contanier,string assetPath)
+        private EventCallback<ClickEvent> cancelEvent;
+
+        public EditorDialogueWindow(VisualElement contanier, string assetPath)
         {
             DialogueContainer = contanier;
-			//DialogueVisualTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(assetPath);
-			DialogueVisualTreeAsset = Resources.Load<VisualTreeAsset>(assetPath);
-			if (DialogueVisualTreeAsset == null)
+            //DialogueVisualTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(assetPath);
+            DialogueVisualTreeAsset = Resources.Load<VisualTreeAsset>(assetPath);
+            if (DialogueVisualTreeAsset == null)
             {
                 Debug.LogWarning($"Load Asset {assetPath} failed.");
                 return;
             }
-            template = DialogueVisualTreeAsset.CloneTree();
-			DialogueContainer.Add(template);
 
-            //»ñÈ¡µ½ËùÓĞ¿Ø¼şºÍ¿Ø¼şÉÏµÄÃæ°å
+            template = DialogueVisualTreeAsset.CloneTree();
+            DialogueContainer.Add(template);
+
+            //è·å–åˆ°æ‰€æœ‰æ§ä»¶å’Œæ§ä»¶ä¸Šçš„é¢æ¿
             dialogueTitleLabel = template.Q<Label>("DialogueTitle");
             messagePanel = template.Q<VisualElement>("Message");
             createAssetPanel = template.Q<VisualElement>("CreateAsset");
@@ -60,11 +66,11 @@ namespace RPGCore.Dialogue.Editor
             okButton = template.Q<Button>("OK");
             cancelButton = template.Q<Button>("Cancel");
 
-			//³õÊ¼»¯Ãæ°å
-		}
+            //åˆå§‹åŒ–é¢æ¿
+        }
 
-        public void OpenDialogue(string title,EditorDialogueType dialogueType,
-            EventCallback<ClickEvent> okEvent,EventCallback<ClickEvent> cancelEvent,string message = "")
+        public void OpenDialogue(string title, EditorDialogueType dialogueType,
+            EventCallback<ClickEvent> okEvent, EventCallback<ClickEvent> cancelEvent, string message = "")
         {
             dialogueTitleLabel.text = title;
             this.okEvent = okEvent;
@@ -78,32 +84,33 @@ namespace RPGCore.Dialogue.Editor
                     messagePanel.style.display = DisplayStyle.Flex;
                     messagePanelmessageLabel.text = message;
                     currentOpendPanel = messagePanel;
-					break;
+                    break;
                 case EditorDialogueType.CreateAsset:
                     createAssetPanel.style.visibility = Visibility.Visible;
                     createAssetPanel.style.display = DisplayStyle.Flex;
                     currentOpendPanel = createAssetPanel;
-					break;
+                    break;
             }
+
             DialogueContainer.style.visibility = Visibility.Visible;
-		}
+        }
 
         public void CloseDialogue()
         {
-			currentOpendPanel.style.visibility = Visibility.Hidden;
-			currentOpendPanel.style.display = DisplayStyle.None;
+            currentOpendPanel.style.visibility = Visibility.Hidden;
+            currentOpendPanel.style.display = DisplayStyle.None;
             okButton.UnregisterCallback(okEvent);
-			cancelButton.UnregisterCallback(cancelEvent);
-			DialogueContainer.style.visibility = Visibility.Hidden;
-			//WindowContainer.Remove(template);
+            cancelButton.UnregisterCallback(cancelEvent);
+            DialogueContainer.style.visibility = Visibility.Hidden;
+            //WindowContainer.Remove(template);
         }
 
-        public string GetCreateAssetName() 
+        public string GetCreateAssetName()
         {
             return createAssetNameField.text;
         }
 
-        public string GetCreateAssetDescription() 
+        public string GetCreateAssetDescription()
         {
             return createAssetDescriptionField.text;
         }

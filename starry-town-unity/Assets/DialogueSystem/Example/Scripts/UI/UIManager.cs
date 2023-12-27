@@ -6,84 +6,83 @@ using UnityEngine;
 
 namespace RPGCore.UI
 {
-	//Ê¹ÓÃÕâ¸öUIManagerÀ´¿ØÖÆPanelµÄÏÔÒş
-	public class UIManager : Singleton<UIManager>
-	{
-		public int PanelCount => panelDic.Count;
-		//ÓÃÀ´´æ´¢Panel µ±Ò»¸öUIMangerµÚÒ»´ÎShowÒ»¸öPanelÊ± »á´´½¨Õâ¸öPanelµÄÊµÀı¼ÓÈëµ½Õâ¸öDictionaryÖĞ
-		private Dictionary<string, BasePanel> panelDic = new Dictionary<string, BasePanel>();
+    //ä½¿ç”¨è¿™ä¸ªUIManageræ¥æ§åˆ¶Panelçš„æ˜¾éš
+    public class UIManager : Singleton<UIManager>
+    {
+        public int PanelCount => panelDic.Count;
 
-		private Transform canvasTrans;
+        //ç”¨æ¥å­˜å‚¨Panel å½“ä¸€ä¸ªUIMangerç¬¬ä¸€æ¬¡Showä¸€ä¸ªPanelæ—¶ ä¼šåˆ›å»ºè¿™ä¸ªPanelçš„å®ä¾‹åŠ å…¥åˆ°è¿™ä¸ªDictionaryä¸­
+        private Dictionary<string, BasePanel> panelDic = new Dictionary<string, BasePanel>();
 
-		public UIManager()
-		{
-			canvasTrans = GameObject.Find("Canvas").transform;
-			GameObject.DontDestroyOnLoad(canvasTrans.gameObject);
-		}
+        private Transform canvasTrans;
 
-		/// <summary>
-		/// ÏÔÊ¾Ò»¸öÃæ°å
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
-		public T ShowPanel<T>() where T : BasePanel
-		{
-			//Í¨¹ı·´ÉäÄÃµ½Ãû³Æ ÔÙ¸ù¾İÃû³ÆÅĞ¶Ïµ±Ç°Ãæ°åÊÇ·ñÒÑ¾­ÓĞÁË
-			string panelName = typeof(T).Name;
-			if (panelDic.ContainsKey(panelName))
-			{
-				panelDic[panelName].gameObject.SetActive(true);
-				panelDic[panelName].Show();
-				return panelDic[panelName] as T;
-			}
-			//µ±Ç°Ãæ°å²»´æÔÚ¾Í´´½¨Ò»¸ö ²¢ÇÒ¼ÓÈëdictionary
-			GameObject panelObj = GameObject.Instantiate(Resources.Load<GameObject>("UI/" + panelName));
-			panelObj.transform.SetParent(canvasTrans, false);
-			T panel = panelObj.GetComponent<T>();
-			panelDic[panelName] = panel;
+        public UIManager()
+        {
+            canvasTrans = GameObject.Find("Canvas").transform;
+            GameObject.DontDestroyOnLoad(canvasTrans.gameObject);
+        }
 
-			//µ÷ÓÃÃæ°å×ÔÉíµÄÏÔÊ¾·½·¨
-			panel.Show();
+        /// <summary>
+        /// æ˜¾ç¤ºä¸€ä¸ªé¢æ¿
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public T ShowPanel<T>() where T : BasePanel
+        {
+            //é€šè¿‡åå°„æ‹¿åˆ°åç§° å†æ ¹æ®åç§°åˆ¤æ–­å½“å‰é¢æ¿æ˜¯å¦å·²ç»æœ‰äº†
+            string panelName = typeof(T).Name;
+            if (panelDic.ContainsKey(panelName))
+            {
+                panelDic[panelName].gameObject.SetActive(true);
+                panelDic[panelName].Show();
+                return panelDic[panelName] as T;
+            }
 
-			return panel;
-		}
+            //å½“å‰é¢æ¿ä¸å­˜åœ¨å°±åˆ›å»ºä¸€ä¸ª å¹¶ä¸”åŠ å…¥dictionary
+            GameObject panelObj = GameObject.Instantiate(Resources.Load<GameObject>("UI/" + panelName));
+            panelObj.transform.SetParent(canvasTrans, false);
+            T panel = panelObj.GetComponent<T>();
+            panelDic[panelName] = panel;
 
-		/// <summary>
-		/// Òş²ØÃæ°å
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="isFade"></param>
-		public void HidePanel<T>(bool isFade = true) where T : BasePanel
-		{
-			string panelName = typeof(T).Name;
-			if (panelDic.ContainsKey(panelName))
-			{
-				if (isFade)
-				{
-					panelDic[panelName].Hide(() =>
-					{
-						panelDic[panelName].gameObject.SetActive(false);
-					});
-				}
-				else
-				{
-					GameObject.Destroy(panelDic[panelName].gameObject);
-					panelDic.Remove(panelName);
-				}
-			}
-		}
+            //è°ƒç”¨é¢æ¿è‡ªèº«çš„æ˜¾ç¤ºæ–¹æ³•
+            panel.Show();
 
-		public T GetPanel<T>() where T : BasePanel
-		{
-			string panelName = typeof(T).Name;
-			if (panelDic.ContainsKey(panelName))
-			{
-				return panelDic[panelName] as T;
-			}
-			else
-			{
-				return null;
-			}
-		}
-	}
+            return panel;
+        }
+
+        /// <summary>
+        /// éšè—é¢æ¿
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="isFade"></param>
+        public void HidePanel<T>(bool isFade = true) where T : BasePanel
+        {
+            string panelName = typeof(T).Name;
+            if (panelDic.ContainsKey(panelName))
+            {
+                if (isFade)
+                {
+                    panelDic[panelName].Hide(() => { panelDic[panelName].gameObject.SetActive(false); });
+                }
+                else
+                {
+                    GameObject.Destroy(panelDic[panelName].gameObject);
+                    panelDic.Remove(panelName);
+                }
+            }
+        }
+
+        public T GetPanel<T>() where T : BasePanel
+        {
+            string panelName = typeof(T).Name;
+            if (panelDic.ContainsKey(panelName))
+            {
+                return panelDic[panelName] as T;
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
 }

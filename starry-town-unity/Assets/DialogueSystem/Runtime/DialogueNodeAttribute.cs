@@ -5,8 +5,8 @@ using UnityEngine;
 
 namespace RPGCore.Dialogue.Runtime
 {
-	public class DialogueNodeAttribute : Attribute
-	{
-		public string Path;
-	}
+    public class DialogueNodeAttribute : Attribute
+    {
+        public string Path;
+    }
 }

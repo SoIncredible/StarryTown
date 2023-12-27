@@ -3,9 +3,9 @@ using System;
 
 namespace RPGCore.Dialogue.Editor
 {
-	[AttributeUsage(AttributeTargets.Class)]
-	public class DialogueGraphNodeAttribute : Attribute
-	{
-		public DgNodeType Type;
-	}
+    [AttributeUsage(AttributeTargets.Class)]
+    public class DialogueGraphNodeAttribute : Attribute
+    {
+        public DgNodeType Type;
+    }
 }

@@ -4,5 +4,5 @@ using UnityEngine;
 
 public abstract class BaseItem : MonoBehaviour
 {
-	public int Id {  get; set; }
+    public int Id { get; set; }
 }
